@@ -25,8 +25,8 @@ async function createLanguageChart(){
 console.log(languages)
 
 // set the dimensions and margins of the graph
-var width = 450
-var height = 450
+var width = 400
+var height = 400
 var margin = 40
 
     // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
@@ -75,6 +75,11 @@ svg
 
 
   // Add labels
+
+  var arc = d3.arc()
+  .innerRadius(0) // Inner radius of the arc (for pie or donut charts)
+  .outerRadius(radius); // Outer radius of the arc (based on your chart setup)
+
 svg.selectAll('text')
 .data(data_ready)
 .enter()
@@ -86,6 +91,8 @@ svg.selectAll('text')
 })
 .style('text-anchor', 'middle')
 .style('font-size', '12px');
+
+//end language function
 }
 
 
@@ -133,5 +140,6 @@ scroller
     console.log('enter', response);
   })
   .onStepExit((response) => {
+    d3.select('g').style('opacity', 0)
     console.log('exit', response);
   });
