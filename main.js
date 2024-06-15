@@ -1,6 +1,22 @@
 const width = 400;
 const height = 400;
 
+let owner = "";
+let repo = "";
+
+const f = document.getElementById("repo_owner_form")
+
+f.addEventListener("submit", async (event) => {
+  event.preventDefault()
+  const chosenOwner = document.getElementById("owner").value
+  owner = chosenOwner;
+  const chosenRepo = document.getElementById("repo").value
+  repo = chosenRepo;
+  display(await createDataArray());
+
+})
+console.log(owner, repo)
+
 const data = d3.range(20).map(() => ({x: Math.random()* width, y: Math.random()*height}));
 
 const circles = d3.select('svg').selectAll('circle').data(data)
