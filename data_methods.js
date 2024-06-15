@@ -39,8 +39,6 @@ class ResponseData {
       }
 }
 
-export default ResponseData;
-
 // const responseData = new ResponseData;
 
 
