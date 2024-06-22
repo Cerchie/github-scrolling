@@ -14,15 +14,13 @@ f.addEventListener("submit", async (event) => {
   owner = chosenOwner;
   const chosenRepo = document.getElementById("repo").value
   repo = chosenRepo;
-  display(await createDataArray());
-
 })
 
 
 
 async function createLanguageChart(){
     const languages = await responseData.getLanguages(owner, repo);
-
+    d3.select("svg").remove();
 
 // set the dimensions and margins of the graph
 var width = 400
@@ -33,11 +31,13 @@ var margin = 0
 var radius = Math.min(width, height) / 2 - margin
 
 // append the svg object to the div called 'my_dataviz'
-var svg = d3.select("svg")
-    .attr("width", width)
-    .attr("height", height)
-  .append("g")
-    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+const svg = d3.select("#chart-0-container")
+.append("svg")
+.attr("id", "chart-0")
+.attr("width", width)
+.attr("height", height)
+.append("g")
+.attr("transform", `translate(${width / 2},${height / 2})`);
 
 
 // get data
@@ -81,7 +81,6 @@ svg
   .attr('fill', function(d){ return(color(d.data.key)) })
   .attr("stroke", "black")
   .style("stroke-width", "2px")
-  .style("opacity", 1)
 
 
   // Add labels
@@ -103,24 +102,31 @@ svg.selectAll('text')
 }
 
 async function createTopTenContributorsChart(){
-d3.select("#lang_chart").style("display", "none");
+    // set the dimensions and margins of the graph
+var margin = {top: 30, right: 30, bottom: 70, left: 30},
+width = 500 - margin.left - margin.right,
+height = 400 - margin.top - margin.bottom;
+d3.select("svg").remove();
+  // Select the container where you want to append #chart-1
+  var svgContainer = d3.select("#chart-0-container");
+
+  // Append a new SVG for #chart-1
+  var svg = svgContainer
+    .append("svg")
+    .attr("id", "chart-1")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+console.log("top ten called")
     const data = await responseData.getTopTenContributors(owner, repo);
 console.log(data)
 
-// set the dimensions and margins of the graph
-var margin = {top: 30, right: 30, bottom: 70, left: 30},
-    width = 500 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+
 
 // append the svg object to the body of the page
-var svg = d3.select("svg")
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")")
-          .attr("id", "lang_chart");
+
+     
 
 // Parse the Data
 console.log(data.map(function(d) { return d.login; }))
@@ -147,7 +153,7 @@ svg.append("g")
   .call(d3.axisLeft(y));
 
 // Bars
-svg.selectAll("mybar")
+svg.selectAll(".bar")
   .data(data)
   .enter()
   .append("rect")
@@ -175,16 +181,42 @@ scroller
   .setup({
     step: ".step",
   })
-  .onStepEnter((response) => {
-    d3.select('#chart').style('opacity', 1)
-    callbacks[response.index]();
-    steps.style('opacity', 0.1);
-    d3.select(response.element).style('opacity', 1)
-    console.log('enter', response);
+  .onStepEnter(handleStepEnter) // Define the onStepEnter callback
+  .onStepExit(handleStepExit); // Define the onStepExit callback
 
-  })
-  .onStepExit((response) => {
-    
-    d3.select(response.element).style('opacity', 0)
+  let currentStepIndex = -1; // Variable to keep track of the current step index
+
+  // Callback function for onStepEnter
+  function handleStepEnter(response) {
+    const index = response.index;
+
+    // Reset SVG content based on the chart type (assuming callbacks[index] corresponds to createLanguageChart or createTopTenContributorsChart)
+    callbacks[index]();
+  
+    // Update the current step index
+    currentStepIndex = index;
+    // Show the chart for the current step
+    d3.select('#chart-' + index)
+    .style('opacity', 1);
+    // Highlight the current step
+    d3.selectAll('.step')
+      .style('opacity', (d, i) => i === index ? 1 : 0);
+  
+    console.log('enter', response);
+    }
+  
+  
+  // Callback function for onStepExit
+// Callback function for onStepExit
+function handleStepExit(response) {
+    const index = response.index;
+
+    // Hide the current chart on exit
+    d3.select('#chart-' + index)
+      .style('opacity', 0)
+  
     console.log('exit', response);
-  });
+  }
+  
+
+  
