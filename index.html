@@ -1,96 +1,141 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GitHub Repo Visualizer</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1 {
-            text-align: center;
-            margin-top: 50px;
-        }
-        div {
-            margin: 0 auto;
-            width: 80%;
-            padding: 20px;
-            font-size: 1.2em;
-            line-height: 1.6em;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      h1 {
+        text-align: center;
+        margin-top: 50px;
+      }
+      div {
+        margin: 0 auto;
+        width: 80%;
+        padding: 20px;
+        font-size: 1.2em;
+        line-height: 1.6em;
+      }
 
-        .holder {
-            display: flex;
-        }
+      .holder {
+        display: flex;
+      }
 
-        .steps {
-            width: 40%;
-        }
+      .steps {
+        width: 40%;
+      }
 
-        #chart {
-            width: 50%;
-            margin-right: 5px;
-            position: sticky;
-            top: 0px;
-            left: 0px;
-            width: 400px;
-            height: 400px;
-        }
+      #chart {
+        width: 50%;
+        margin-right: 5px;
+        position: sticky;
+        top: 0px;
+        left: 0px;
+        width: 400px;
+        height: 400px;
+      }
 
-        #chart-0-container {
-            width: 50%;
-            margin-right: 5px;
-            position: sticky;
-            top: 0px;
-            left: 0px;
-            width: 400px;
-            height: 400px;
-        }
+      #chart-0-container {
+        width: 50%;
+        margin-right: 5px;
+        position: sticky;
+        top: 0px;
+        left: 0px;
+        width: 400px;
+        height: 400px;
+      }
 
-        .step {
-            margin-top: 50px;
-            min-height: 600px;
-        }
-
+      .step {
+        margin-top: 50px;
+        min-height: 600px;
+      }
     </style>
-</head>
-<body>
-<h1>Hello Scrolly!</h1>
-<div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente deleniti cumque molestiae ducimus doloremque quibusdam voluptas deserunt quaerat recusandae. Quam adipisci molestias odit harum neque sunt temporibus itaque illum aliquid.</div>
-<div class="container">
-    <form id="repo_owner_form">
-      <div class="form-group">
-        <label for="repo">Enter the GitHub repo owner:</label>
-        <input type="text" class="form-control" id="owner" name="owner" placeholder="e.g. apache">
-        <label for="repo">Enter the GitHub repo name:</label>
-        <input type="text" class="form-control" id="repo" name="repo" placeholder="e.g. flink">
-      </div>
-      <button type="submit" class="btn btn-default">Submit</button>
-    </form>
-  </div>
-
-<section>
-    <h2>Section 1</h2>
-<div class="holder">
-    <div id="chart-0-container"></div>
-    <div class="steps">
-        <div class="step">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt voluptates ducimus reiciendis! Rem voluptatum veritatis saepe nesciunt dignissimos atque magni dolorum illum explicabo fugiat? Voluptatibus consequuntur optio itaque quod soluta.</div>
-        <div class="step">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt voluptates ducimus reiciendis! Rem voluptatum veritatis saepe nesciunt dignissimos atque magni dolorum illum explicabo fugiat? Voluptatibus consequuntur optio itaque quod soluta.</div>
-        <div class="step">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt voluptates ducimus reiciendis! Rem voluptatum veritatis saepe nesciunt dignissimos atque magni dolorum illum explicabo fugiat? Voluptatibus consequuntur optio itaque quod soluta.</div>
-        <div class="step">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt voluptates ducimus reiciendis! Rem voluptatum veritatis saepe nesciunt dignissimos atque magni dolorum illum explicabo fugiat? Voluptatibus consequuntur optio itaque quod soluta.</div>
-        <div class="step">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt voluptates ducimus reiciendis! Rem voluptatum veritatis saepe nesciunt dignissimos atque magni dolorum illum explicabo fugiat? Voluptatibus consequuntur optio itaque quod soluta.</div>
+  </head>
+  <body>
+    <h1>Hello Scrolly!</h1>
+    <div>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente deleniti
+      cumque molestiae ducimus doloremque quibusdam voluptas deserunt quaerat
+      recusandae. Quam adipisci molestias odit harum neque sunt temporibus
+      itaque illum aliquid.
     </div>
-</div>
-</section>
-<section>
-    <h2>the end</h2>
-    <div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad explicabo assumenda incidunt adipisci enim maiores sunt quas temporibus eos illo reiciendis illum at pariatur eaque, hic accusamus quos totam tempora!</div>
-</section>
-<script src="https://d3js.org/d3.v6.js"></script>
-<script src="https://unpkg.com/scrollama"></script>
-<script src="./data_methods.js"></script>
-<script src="./main.js"></script>
-</body>
+    <div class="container">
+      <form id="repo_owner_form">
+        <div class="form-group">
+          <label for="repo">Enter the GitHub repo owner:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="owner"
+            name="owner"
+            placeholder="e.g. apache"
+          />
+          <label for="repo">Enter the GitHub repo name:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="repo"
+            name="repo"
+            placeholder="e.g. flink"
+          />
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+      </form>
+    </div>
+
+    <section>
+      <h2>Section 1</h2>
+      <div class="holder">
+        <div id="chart-0-container"></div>
+        <div class="steps">
+          <div class="step">
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt
+            voluptates ducimus reiciendis! Rem voluptatum veritatis saepe
+            nesciunt dignissimos atque magni dolorum illum explicabo fugiat?
+            Voluptatibus consequuntur optio itaque quod soluta.
+          </div>
+          <div class="step">
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt
+            voluptates ducimus reiciendis! Rem voluptatum veritatis saepe
+            nesciunt dignissimos atque magni dolorum illum explicabo fugiat?
+            Voluptatibus consequuntur optio itaque quod soluta.
+          </div>
+          <div class="step">
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt
+            voluptates ducimus reiciendis! Rem voluptatum veritatis saepe
+            nesciunt dignissimos atque magni dolorum illum explicabo fugiat?
+            Voluptatibus consequuntur optio itaque quod soluta.
+          </div>
+          <div class="step">
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt
+            voluptates ducimus reiciendis! Rem voluptatum veritatis saepe
+            nesciunt dignissimos atque magni dolorum illum explicabo fugiat?
+            Voluptatibus consequuntur optio itaque quod soluta.
+          </div>
+          <div class="step">
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt
+            voluptates ducimus reiciendis! Rem voluptatum veritatis saepe
+            nesciunt dignissimos atque magni dolorum illum explicabo fugiat?
+            Voluptatibus consequuntur optio itaque quod soluta.
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <h2>the end</h2>
+      <div>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad explicabo
+        assumenda incidunt adipisci enim maiores sunt quas temporibus eos illo
+        reiciendis illum at pariatur eaque, hic accusamus quos totam tempora!
+      </div>
+    </section>
+    <script src="https://d3js.org/d3.v6.js"></script>
+    <script src="https://unpkg.com/scrollama"></script>
+    <script src="./data_methods.js"></script>
+    <script src="./main.js"></script>
+  </body>
 </html>
