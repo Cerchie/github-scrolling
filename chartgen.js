@@ -1,4 +1,5 @@
 async function createLanguageChart() {
+     //TODO https://gist.github.com/dbuezas/9306799
   const languages = await responseData.getLanguages(owner, repo);
   d3.select("svg").remove();
 
@@ -238,7 +239,8 @@ async function createStargazersAndForksChart() {
     )
     .attr("fill", "black")
     .attr("text-anchor", "middle")
-    .attr("dy", -20);
+    .attr("dy", -20)
+    .attr("fill", "white");
   console.log(data);
 }
 async function createLengthActiveChart() {
@@ -288,7 +290,7 @@ async function createLengthActiveChart() {
         duration.months +
         "Days" +
         duration.days,
-    ); // Set the text content
+    ).attr("fill", "white"); 
 }
 
 async function createSizeChart() {
@@ -308,5 +310,6 @@ async function createSizeChart() {
   g.append("text")
     .attr("x", 50) // Adjust x position as needed
     .attr("y", 50) // Adjust y position as needed
-    .text(data); // Set the text content
+    .text(data)
+    .attr("fill", "white"); // Set the text content
 }
