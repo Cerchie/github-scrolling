@@ -6,14 +6,20 @@ let repo = "";
 
 const responseData = new ResponseData();
 
+
+
 const f = document.getElementById("repo_owner_form");
 
 f.addEventListener("submit", async (event) => {
   event.preventDefault();
+  const errorMessage = document.getElementsByClassName("error-message");
+    errorMessage[0].innerHTML = "";
   const chosenOwner = document.getElementById("owner").value;
   owner = chosenOwner;
   const chosenRepo = document.getElementById("repo").value;
   repo = chosenRepo;
+
+  responseData.getRepo(owner, repo);
 });
 
 // instantiate the scrollama

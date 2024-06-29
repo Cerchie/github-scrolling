@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GitHub Repo Visualizer</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -59,8 +59,10 @@
   <body>
     <h1>Welcome to the GitHub Repository Visualizer!</h1>
     <div>
-Enter the owner and name of the GitHub repository you would like to visualize. 
+      Enter the owner and name of the GitHub repository you would like to
+      visualize.
     </div>
+    <div class="error-message"></div>
     <div class="container">
       <form id="repo_owner_form">
         <div class="form-group">
@@ -91,19 +93,20 @@ Enter the owner and name of the GitHub repository you would like to visualize.
         <div id="chart-0-container"></div>
         <div class="steps">
           <div class="step">
-Here's a breakdown of the programming languages comprising the files in the repository.
+            Here's a breakdown of the programming languages comprising the files
+            in the repository.
           </div>
           <div class="step">
-These are the top ten contributors to the repository.
+            These are the top ten contributors to the repository.
           </div>
           <div class="step">
-This is the number of stargazers compared to the number of forks.
+            This is the number of stargazers compared to the number of forks.
           </div>
           <div class="step">
-This is how long the repository has been active.
+            This is how long the repository has been active.
           </div>
           <div class="step">
-This is the size of the repository in kilobytes.
+            This is the size of the repository in kilobytes.
           </div>
         </div>
       </div>
@@ -111,7 +114,9 @@ This is the size of the repository in kilobytes.
     <section>
       <h2>Thanks for scrolling!</h2>
       <div>
-I hope you enjoyed this visualization of your selected GitHub repository. To see more of my projects, visit my <a href="https://luciacerchie.dev/">website</a>.
+        I hope you enjoyed this visualization of your selected GitHub
+        repository. To see more of my projects, visit my
+        <a href="https://luciacerchie.dev/">website</a>.
       </div>
     </section>
     <script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
