@@ -95,9 +95,9 @@ button {
   margin-top: 1em;
   font-size: 1em;
   font-weight: lightest;
-  color: #5ce6bc;
+  color: white;
   background-color: black; /* Primary button color */
-  border: 1px solid #5ce6bc;
+  border: 1px solid whitesmoke;
   border-radius: 5px;
   cursor: pointer;
 }
