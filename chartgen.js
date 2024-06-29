@@ -251,5 +251,6 @@ async function createLanguageChart() {
         const data = await responseData.getSize(owner, repo);
         d3.select("svg").remove();
         var svgContainer = d3.select("#chart-0-container");
-        //TODO: CHART
+        let svg = svgContainer.append("svg")
+        svg.append("text").text(data)
       }
