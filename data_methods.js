@@ -6,29 +6,27 @@ class ResponseData {
 
   async getRepo(owner, repo) {
     try {
-        const response = await fetch(
-          `https://api.github.com/repos/${owner}/${repo}`,
-        );
-  
-        if (!response.ok) {
-          if (response.status === 404) {
-            throw new Error(`Repository '${owner}/${repo}' not found.`);
-          } else if (response.status === 403) {
-            throw new Error(`Access to repository '${owner}/${repo}' forbidden.`);
-          } else {
-            throw new Error(
-              `Failed to fetch data from GitHub API: ${response.status} ${response.statusText}`,
-            );
-          }
+      const response = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}`,
+      );
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error(`Repository '${owner}/${repo}' not found.`);
+        } else if (response.status === 403) {
+          throw new Error(`Access to repository '${owner}/${repo}' forbidden.`);
+        } else {
+          throw new Error(
+            `Failed to fetch data from GitHub API: ${response.status} ${response.statusText}`,
+          );
         }
-
-      } catch (error) {
-        // Handle errors and display appropriate message to the user
-        console.error("Error fetching data:", error.message);
-        displayErrorMessage(error.message); 
       }
+    } catch (error) {
+      // Handle errors and display appropriate message to the user
+      console.error("Error fetching data:", error.message);
+      displayErrorMessage(error.message);
+    }
   }
-
 
   async getLanguages(owner, repo) {
     try {
@@ -161,7 +159,6 @@ class ResponseData {
     } catch (error) {
       // Handle errors and display appropriate message to the user
       console.error("Error fetching data:", error.message);
-
     }
   }
 }
