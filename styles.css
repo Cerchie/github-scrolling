@@ -1,18 +1,22 @@
 /* Body styles */
 body {
-  font-family: "Arial", sans-serif;
+    font-family: "Rubik", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
   margin: 0;
   padding: 0;
-  background-color: #f8f9fa; /* Light background color */
+  background-color: #DFD9E2; /* Light background color */
 }
 
 /* Heading styles */
 h1,
 h2,
 h3 {
-  font-family: "Helvetica Neue", Arial, sans-serif;
-  font-weight: bold;
-  color: #333; /* Dark color for headings */
+    font-family: "Rubik", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: bold;
+    font-style: normal;
+  color: black; /* Dark color for headings */
   margin-top: 30px;
   margin-bottom: 20px;
 }
@@ -50,11 +54,14 @@ textarea {
 
 button {
   display: inline-block;
-  padding: 10px 20px;
+  font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  padding: .5em;
   font-size: 1em;
-  font-weight: bold;
+  font-weight: light;
   color: #fff;
-  background-color: #007bff; /* Primary button color */
+  background-color: #89909F; /* Primary button color */
   border: none;
   border-radius: 3px;
   cursor: pointer;
