@@ -4,7 +4,6 @@ const height = 400;
 let owner = "";
 let repo = "";
 
-
 const responseData = new ResponseData();
 
 const f = document.getElementById("repo_owner_form");
@@ -16,7 +15,6 @@ f.addEventListener("submit", async (event) => {
   const chosenRepo = document.getElementById("repo").value;
   repo = chosenRepo;
 });
-
 
 // instantiate the scrollama
 const scroller = scrollama();
