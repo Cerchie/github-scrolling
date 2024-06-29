@@ -1,3 +1,4 @@
+
 async function createLanguageChart() {
         const languages = await responseData.getLanguages(owner, repo);
         d3.select("svg").remove();
@@ -140,7 +141,6 @@ async function createLanguageChart() {
           .attr("height", height + margin.top + margin.bottom)
           .append("g")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        console.log("top ten called");
         const data = await responseData.getTopTenContributors(owner, repo);
         console.log(data);
       
@@ -240,17 +240,65 @@ async function createLanguageChart() {
         console.log(data);
       }
       async function createLengthActiveChart() {
-        const data = await responseData.getLengthActive(owner, repo);
         d3.select("svg").remove();
+        const data = await responseData.getLengthActive(owner, repo);
+
+
+
+        function calculateDuration(startDateStr, endDateStr) {
+            const startDate = new Date(startDateStr);
+            const endDate = new Date(endDateStr);
+        
+            const diffMonths =  dateFns.differenceInCalendarMonths(endDate, startDate);
+            const diffDays =  dateFns.differenceInCalendarDays(endDate, startDate);
+        
+            // Calculate years and remaining months
+            const years = Math.floor(diffMonths / 12);
+            const months = diffMonths % 12;
+        
+            return { years, months, days: diffDays };
+        }
+        
+        // Example usage:
+        const startDateStr = data.created_at;
+        const endDateStr = data.pushed_at;
+        
+        const duration = calculateDuration(startDateStr, endDateStr);
+        console.log('DURATION',duration);
+
+
+        console.log('LENGTH ACTIVE',data)
         var svgContainer = d3.select("#chart-0-container");
-        //TODO: CHART
-        console.log(data);
+
+        var svg = svgContainer.append("svg")
+        .attr("width", 400) // Set a width for the SVG container
+        .attr("height", 200); // Set a height for the SVG container
+
+    // Append a group ('g') element to the SVG
+    var g = svg.append("g");
+
+    // Append text element to the group ('g')
+    g.append("text")
+        .attr("x", 50) // Adjust x position as needed
+        .attr("y", 50) // Adjust y position as needed
+        .text("Years" + duration.years + "Months" + duration.months + "Days" + duration.days); // Set the text content
       }
       
       async function createSizeChart() {
         const data = await responseData.getSize(owner, repo);
         d3.select("svg").remove();
+        console.log(data)
         var svgContainer = d3.select("#chart-0-container");
-        let svg = svgContainer.append("svg")
-        svg.append("text").text(data)
+        var svg = svgContainer.append("svg")
+        .attr("width", 400) // Set a width for the SVG container
+        .attr("height", 200); // Set a height for the SVG container
+
+    // Append a group ('g') element to the SVG
+    var g = svg.append("g");
+
+    // Append text element to the group ('g')
+    g.append("text")
+        .attr("x", 50) // Adjust x position as needed
+        .attr("y", 50) // Adjust y position as needed
+        .text(data); // Set the text content
       }
