@@ -1,16 +1,15 @@
 /* Body styles */
 body {
-  font-family: "Rubik", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 200;
-  margin: 20px;
+    font-family: "Averia Serif Libre", serif;
+    font-weight: 300;
+    font-style: normal;
   padding: 0;
   color: white;
   background-color: black; /* Light background color */
 }
 
 /* Heading styles */
-h1,
+
 h2,
 h3 {
   font-family: "Rubik", sans-serif;
@@ -18,8 +17,7 @@ h3 {
   font-weight: 200;
   font-style: normal;
   color: white; /* Dark color for headings */
-  margin-top: 30px;
-  margin-bottom: 20px;
+
 }
 
 /* Container styles */
@@ -36,6 +34,10 @@ h3 {
 /* Form styles */
 .form-group {
   margin: 1em;
+  text-align: left;
+  font-family: "Averia Serif Libre", serif;
+  font-weight: 300;
+  font-style: normal;
 }
 
 label {
@@ -44,21 +46,43 @@ label {
   margin-bottom: 5px;
 }
 
+h1{
+    font-family: "Averia Serif Libre", serif;
+    font-weight: 300;
+    font-style: normal;
+    text-align:center;
+    font-style: normal;
+    font-size: 4em;
+}
+
+#end-p {
+    font-family: "Averia Serif Libre", serif;
+    font-weight: 300;
+    font-style: normal;
+    text-align:center;
+    font-style: normal;
+    font-size: 2em;
+}
+
 input[type="text"],
-input[type="email"],
 textarea {
   width: 100%;
-  padding: 0.5em;
+  padding: 10px;
   font-size: 1em;
-  margin: 1em;
+  margin-top: .25em;
+  margin-bottom: 1em;
   border: 1px solid #ccc;
   border-radius: 3px;
+  box-sizing: border-box;
+  font-family: "Averia Serif Libre", serif;
+  font-weight: 300;
+  font-style: normal;
 }
 
 button {
   display: inline-block;
-  font-family: "Rubik", sans-serif;
-  font-optical-sizing: auto;
+  font-family: "Averia Serif Libre", serif;
+  font-weight: 300;
   font-style: normal;
   padding: 0.5em;
   font-size: 1em;
