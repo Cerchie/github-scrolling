@@ -30,6 +30,13 @@ h3 {
   border-radius: 5px;
 }
 
+.error-message {
+    max-width: 960px;
+
+  padding: 20px;
+
+}
+
 /* Form styles */
 .form-group {
   margin: 1em;
