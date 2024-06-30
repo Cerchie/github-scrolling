@@ -1,128 +1,102 @@
 async function createLanguageChart() {
-     //TODO https://gist.github.com/dbuezas/9306799
-  const languages = await responseData.getLanguages(owner, repo);
-  d3.select("svg").remove();
-
-  // set the dimensions and margins of the graph
-  var width = 400;
-  var height = 400;
-  var margin = 0;
-
-  // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
-  var radius = Math.min(width, height) / 2 - margin;
-
-  // append the svg object to the div called 'my_dataviz'
-  const svg = d3
-    .select("#chart-0-container")
-    .append("svg")
-    .attr("id", "chart-0")
-    .attr("width", width)
-    .attr("height", height)
-    .append("g")
-    .attr("transform", `translate(${width / 2},${height / 2})`);
-
-  // get data
-  var data = languages;
-
-  var customRange = [
-    "#1f77b4",
-    "#ff7f0e",
-    "#2ca02c",
-    "#d62728",
-    "#9467bd",
-    "#8c564b",
-    "#e377c2",
-    "#7f7f7f",
-    "#bcbd22",
-    "#17becf",
-    "#aec7e8",
-    "#ff9896",
-    "#9467bd",
-    "#c5b0d5",
-    "#8c564b",
-    "#c49c94",
-    "#e377c2",
-    "#f7b6d2",
-    "#7f7f7f",
-    "#c7c7c7",
-    "#98df8a",
-    "#aec7e8",
-    "#c5b0d5",
-    "#ffbb78",
-    "#c49c94",
-    "#f7b6d2",
-    "#c7c7c7",
-    "#bcbd22",
-    "#ffbb78",
-    "#17becf",
-    "#9edae5",
-    "#aec7e8",
-    "#1f77b4",
-    "#ff7f0e",
-    "#2ca02c",
-    "#d62728",
-    "#9467bd",
-    "#8c564b",
-    "#e377c2",
-    "#7f7f7f",
-    "#bcbd22",
-    "#17becf",
-    "#aec7e8",
-    "#ff9896",
-    "#9467bd",
-    "#c5b0d5",
-    "#8c564b",
-    "#c49c94",
-    "#e377c2",
-    "#f7b6d2",
-  ];
-
-  var color = d3
-    .scaleOrdinal()
-    .domain(Object.keys(data))
-    .range(customRange.slice(0, Object.keys(data).length - 1));
-  // Compute the position of each group on the pie:
-  var pie = d3.pie().value(function (d) {
-    return d[1];
-  });
-
-  var data_ready = pie(Object.entries(data));
-
-  // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
-  svg
-    .selectAll("pieces")
-    .data(data_ready)
-    .enter()
-    .append("path")
-    .attr("d", d3.arc().innerRadius(0).outerRadius(radius))
-    .attr("fill", function (d) {
-      return color(d.data.key);
-    })
-    .attr("stroke", "black")
-    .style("stroke-width", "2px");
-
-  // Add labels
-
-  var arc = d3
-    .arc()
-    .innerRadius(0) // Inner radius of the arc (for pie or donut charts)
-    .outerRadius(radius); // Outer radius of the arc (based on your chart setup)
-
-  svg
-    .selectAll("text")
-    .data(data_ready)
-    .enter()
-    .append("text")
-    .text(function (d) {
-      return d.data[0];
-    })
-    .attr("transform", function (d) {
-      return "translate(" + arc.centroid(d) + ")";
-    })
-    .style("font-size", 17);
-
-  //end language function
-}
+    const languages = await responseData.getLanguages(owner, repo);
+    d3.select("svg").remove();
+  
+    // Set the dimensions and margins of the graph
+    var width = 600;
+    var height = 600;
+    var margin = 20;
+  
+    // The radius of the pieplot is half the width or height (whichever is smaller)
+    var radius = Math.min(width, height) / 2 - margin;
+  
+    // Append the svg object to the div called 'chart-0-container'
+    const svg = d3
+      .select("#chart-0-container")
+      .append("svg")
+      .attr("id", "chart-0")
+      .attr("width", width)
+      .attr("height", height)
+      .append("g")
+      .attr("transform", `translate(${width / 2},${height / 2})`);
+  
+    // Extract the data from the object into an array of { language: name, count: value }
+    var data = Object.keys(languages).map(key => ({
+      language: key,
+      count: languages[key]
+    }));
+  
+    // Define color scale
+    var customRange = d3.schemeCategory10; // Using a predefined D3 color scheme
+    var color = d3.scaleOrdinal()
+      .domain(data.map(d => d.language))
+      .range(customRange);
+  
+    // Compute the position of each group on the pie:
+    var pie = d3.pie()
+      .value(d => d.count);
+  
+    var data_ready = pie(data);
+  
+    // Define the arc generator
+    var arc = d3.arc()
+      .innerRadius(0)
+      .outerRadius(radius);
+  
+    // Build the pie chart
+    svg.selectAll("pieces")
+      .data(data_ready)
+      .enter()
+      .append("path")
+      .attr("d", arc)
+      .attr("fill", d => color(d.data.language))
+      .attr("stroke", "black")
+      .style("stroke-width", "2px");
+  
+    // Add lines
+    svg.selectAll('lines')
+      .data(data_ready)
+      .enter()
+      .append('line')
+      .attr('x1', d => arc.centroid(d)[0])
+      .attr('y1', d => arc.centroid(d)[1])
+      .attr('x2', function(d) {
+        var pos = arc.centroid(d);
+        var midAngle = Math.atan2(pos[1], pos[0]);
+        var x = Math.cos(midAngle) * (radius + 30);
+        return x;
+      })
+      .attr('y2', function(d) {
+        var pos = arc.centroid(d);
+        var midAngle = Math.atan2(pos[1], pos[0]);
+        var y = Math.sin(midAngle) * (radius + 30);
+        return y;
+      })
+      .attr('stroke', 'black');
+  
+    // Add labels
+    svg.selectAll('labels')
+      .data(data_ready)
+      .enter()
+      .append('text')
+      .text(d => d.data.language)
+      .attr('transform', function(d) {
+        var pos = arc.centroid(d);
+        var midAngle = Math.atan2(pos[1], pos[0]);
+        var x = Math.cos(midAngle) * (radius + 50); // Adjust label position further out than lines
+        var y = Math.sin(midAngle) * (radius + 50); // Adjust label position further out than lines
+        return 'translate(' + x + ',' + y + ')';
+      })
+      .style('text-anchor', function(d) {
+        var pos = arc.centroid(d);
+        return (Math.cos(Math.atan2(pos[1], pos[0])) > 0) ? 'start' : 'end';
+      })
+      .style("font-size", 20).attr("fill", "white");
+  
+    // End of function
+  }
+  
+  
 
 async function createTopTenContributorsChart() {
   // set the dimensions and margins of the graph
