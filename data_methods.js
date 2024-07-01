@@ -30,7 +30,7 @@ class ResponseData {
 
   async getLanguages(owner, repo) {
 
-    //TODO https://gist.github.com/dbuezas/9306799
+   
     try {
       const response = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/languages`,

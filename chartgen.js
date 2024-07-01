@@ -3,9 +3,9 @@ async function createLanguageChart() {
     d3.select("svg").remove();
   
     // Set the dimensions and margins of the graph
-    var width = 600;
-    var height = 600;
-    var margin = 20;
+    var width = 600; // Adjusted for better visibility
+    var height = 600; // Adjusted for better visibility
+    var margin = 100;
   
     // The radius of the pieplot is half the width or height (whichever is smaller)
     var radius = Math.min(width, height) / 2 - margin;
@@ -26,6 +26,9 @@ async function createLanguageChart() {
       count: languages[key]
     }));
   
+    // Sort data by count descending
+    data.sort((a, b) => b.count - a.count);
+  
     // Define color scale
     var customRange = d3.schemeCategory10; // Using a predefined D3 color scheme
     var color = d3.scaleOrdinal()
@@ -44,7 +47,7 @@ async function createLanguageChart() {
       .outerRadius(radius);
   
     // Build the pie chart
-    svg.selectAll("pieces")
+    var arcs = svg.selectAll("pieces")
       .data(data_ready)
       .enter()
       .append("path")
@@ -72,9 +75,10 @@ async function createLanguageChart() {
         var y = Math.sin(midAngle) * (radius + 30);
         return y;
       })
-      .attr('stroke', 'black');
+      .attr('stroke', 'white');
   
-    // Add labels
+    // Add labels with adjustments for overlap prevention
+    var labelPositions = [];
     svg.selectAll('labels')
       .data(data_ready)
       .enter()
@@ -83,18 +87,41 @@ async function createLanguageChart() {
       .attr('transform', function(d) {
         var pos = arc.centroid(d);
         var midAngle = Math.atan2(pos[1], pos[0]);
-        var x = Math.cos(midAngle) * (radius + 50); // Adjust label position further out than lines
-        var y = Math.sin(midAngle) * (radius + 50); // Adjust label position further out than lines
+        var x = Math.cos(midAngle) * (radius + 50); // Initial label position
+        var y = Math.sin(midAngle) * (radius + 50); // Initial label position
+        
+        // Check for overlap with previous labels
+        var overlapping = true;
+        var i = 0;
+        while (overlapping && i < labelPositions.length) {
+          var prevPos = labelPositions[i];
+          var dx = x - prevPos.x;
+          var dy = y - prevPos.y;
+          var distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < 500) { // If labels are too close, adjust position
+            var newAngle = midAngle + (Math.PI / 4); // Adjust angle for separation
+            x = Math.cos(newAngle) * (radius + 50);
+            y = Math.sin(newAngle) * (radius + 50);
+            i = 0; // Restart comparison from beginning
+          } else {
+            overlapping = false; // No overlap found, proceed
+          }
+          i++;
+        }
+        
+        labelPositions.push({ x: x, y: y }); // Store label position
         return 'translate(' + x + ',' + y + ')';
       })
       .style('text-anchor', function(d) {
         var pos = arc.centroid(d);
         return (Math.cos(Math.atan2(pos[1], pos[0])) > 0) ? 'start' : 'end';
       })
-      .style("font-size", 20).attr("fill", "white");
+      .style("font-size", 14) // Adjust font size as needed
+      .attr("fill", "white");
   
     // End of function
-  }
+}
+
   
   
 
@@ -258,12 +285,9 @@ async function createLengthActiveChart() {
     .attr("x", 50) // Adjust x position as needed
     .attr("y", 50) // Adjust y position as needed
     .text(
-      "Years" +
-        duration.years +
-        "Months" +
-        duration.months +
-        "Days" +
-        duration.days,
+        duration.years + " years ",
+        duration.months + "months ",
+        duration.days + " days"
     ).attr("fill", "white"); 
 }
 
