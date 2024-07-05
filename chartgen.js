@@ -1,128 +1,127 @@
 async function createLanguageChart() {
-    const languages = await responseData.getLanguages(owner, repo);
-    d3.select("svg").remove();
-  
-    // Set the dimensions and margins of the graph
-    var width = 600; // Adjusted for better visibility
-    var height = 600; // Adjusted for better visibility
-    var margin = 100;
-  
-    // The radius of the pieplot is half the width or height (whichever is smaller)
-    var radius = Math.min(width, height) / 2 - margin;
-  
-    // Append the svg object to the div called 'chart-0-container'
-    const svg = d3
-      .select("#chart-0-container")
-      .append("svg")
-      .attr("id", "chart-0")
-      .attr("width", width)
-      .attr("height", height)
-      .append("g")
-      .attr("transform", `translate(${width / 2},${height / 2})`);
-  
-    // Extract the data from the object into an array of { language: name, count: value }
-    var data = Object.keys(languages).map(key => ({
-      language: key,
-      count: languages[key]
-    }));
-  
-    // Sort data by count descending
-    data.sort((a, b) => b.count - a.count);
-  
-    // Define color scale
-    var customRange = d3.schemeCategory10; // Using a predefined D3 color scheme
-    var color = d3.scaleOrdinal()
-      .domain(data.map(d => d.language))
-      .range(customRange);
-  
-    // Compute the position of each group on the pie:
-    var pie = d3.pie()
-      .value(d => d.count);
-  
-    var data_ready = pie(data);
-  
-    // Define the arc generator
-    var arc = d3.arc()
-      .innerRadius(0)
-      .outerRadius(radius);
-  
-    // Build the pie chart
-    var arcs = svg.selectAll("pieces")
-      .data(data_ready)
-      .enter()
-      .append("path")
-      .attr("d", arc)
-      .attr("fill", d => color(d.data.language))
-      .attr("stroke", "black")
-      .style("stroke-width", "2px");
-  
-    // Add lines
-    svg.selectAll('lines')
-      .data(data_ready)
-      .enter()
-      .append('line')
-      .attr('x1', d => arc.centroid(d)[0])
-      .attr('y1', d => arc.centroid(d)[1])
-      .attr('x2', function(d) {
-        var pos = arc.centroid(d);
-        var midAngle = Math.atan2(pos[1], pos[0]);
-        var x = Math.cos(midAngle) * (radius + 30);
-        return x;
-      })
-      .attr('y2', function(d) {
-        var pos = arc.centroid(d);
-        var midAngle = Math.atan2(pos[1], pos[0]);
-        var y = Math.sin(midAngle) * (radius + 30);
-        return y;
-      })
-      .attr('stroke', 'white');
-  
-    // Add labels with adjustments for overlap prevention
-    var labelPositions = [];
-    svg.selectAll('labels')
-      .data(data_ready)
-      .enter()
-      .append('text')
-      .text(d => d.data.language)
-      .attr('transform', function(d) {
-        var pos = arc.centroid(d);
-        var midAngle = Math.atan2(pos[1], pos[0]);
-        var x = Math.cos(midAngle) * (radius + 50); // Initial label position
-        var y = Math.sin(midAngle) * (radius + 50); // Initial label position
-        
-        // Check for overlap with previous labels
-        var overlapping = true;
-        var i = 0;
-        while (overlapping && i < labelPositions.length) {
-          var prevPos = labelPositions[i];
-          var dx = x - prevPos.x;
-          var dy = y - prevPos.y;
-          var distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < 500) { // If labels are too close, adjust position
-            var newAngle = midAngle + (Math.PI / 4); // Adjust angle for separation
-            x = Math.cos(newAngle) * (radius + 50);
-            y = Math.sin(newAngle) * (radius + 50);
-            i = 0; // Restart comparison from beginning
-          } else {
-            overlapping = false; // No overlap found, proceed
-          }
-          i++;
+  const languages = await responseData.getLanguages(owner, repo);
+  d3.select("svg").remove();
+
+  // Set the dimensions and margins of the graph
+  var width = 600; // Adjusted for better visibility
+  var height = 600; // Adjusted for better visibility
+  var margin = 100;
+
+  // The radius of the pieplot is half the width or height (whichever is smaller)
+  var radius = Math.min(width, height) / 2 - margin;
+
+  // Append the svg object to the div called 'chart-0-container'
+  const svg = d3
+    .select("#chart-0-container")
+    .append("svg")
+    .attr("id", "chart-0")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g")
+    .attr("transform", `translate(${width / 2},${height / 2})`);
+
+  // Extract the data from the object into an array of { language: name, count: value }
+  var data = Object.keys(languages).map(key => ({
+    language: key,
+    count: languages[key]
+  }));
+
+  // Sort data by count descending
+  data.sort((a, b) => b.count - a.count);
+
+  // Define color scale
+  var customRange = d3.schemeCategory10; // Using a predefined D3 color scheme
+  var color = d3.scaleOrdinal()
+    .domain(data.map(d => d.language))
+    .range(customRange);
+
+  // Compute the position of each group on the pie:
+  var pie = d3.pie()
+    .value(d => d.count);
+
+  var data_ready = pie(data);
+
+  // Define the arc generator
+  var arc = d3.arc()
+    .innerRadius(0)
+    .outerRadius(radius);
+
+  // Build the pie chart
+  var arcs = svg.selectAll("pieces")
+    .data(data_ready)
+    .enter()
+    .append("path")
+    .attr("d", arc)
+    .attr("fill", d => color(d.data.language))
+    .attr("stroke", "black")
+    .style("stroke-width", "2px");
+
+  // Add lines
+  svg.selectAll('lines')
+    .data(data_ready)
+    .enter()
+    .append('line')
+    .attr('x1', d => arc.centroid(d)[0])
+    .attr('y1', d => arc.centroid(d)[1])
+    .attr('x2', function(d) {
+      var pos = arc.centroid(d);
+      var midAngle = Math.atan2(pos[1], pos[0]);
+      var x = Math.cos(midAngle) * (radius + 30);
+      return x;
+    })
+    .attr('y2', function(d) {
+      var pos = arc.centroid(d);
+      var midAngle = Math.atan2(pos[1], pos[0]);
+      var y = Math.sin(midAngle) * (radius + 30);
+      return y;
+    })
+    .attr('stroke', 'white');
+
+  // Add labels with adjustments for overlap prevention
+  var labelPositions = [];
+  svg.selectAll('labels')
+    .data(data_ready)
+    .enter()
+    .append('text')
+    .text(d => d.data.language)
+    .attr('transform', function(d) {
+      var pos = arc.centroid(d);
+      var midAngle = Math.atan2(pos[1], pos[0]);
+      var x = Math.cos(midAngle) * (radius + 50); // Initial label position
+      var y = Math.sin(midAngle) * (radius + 50); // Initial label position
+      
+      // Check for overlap with previous labels
+      var overlapping = true;
+      var i = 0;
+      while (overlapping && i < labelPositions.length) {
+        var prevPos = labelPositions[i];
+        var dx = x - prevPos.x;
+        var dy = y - prevPos.y;
+        var distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < 20) { // If labels are too close, adjust position
+          var newAngle = midAngle + (Math.PI / 4); // Adjust angle for separation
+          x = Math.cos(newAngle) * (radius + 50);
+          y = Math.sin(newAngle) * (radius + 50);
+          i = 0; // Restart comparison from beginning
+        } else {
+          overlapping = false; // No overlap found, proceed
         }
-        
-        labelPositions.push({ x: x, y: y }); // Store label position
-        return 'translate(' + x + ',' + y + ')';
-      })
-      .style('text-anchor', function(d) {
-        var pos = arc.centroid(d);
-        return (Math.cos(Math.atan2(pos[1], pos[0])) > 0) ? 'start' : 'end';
-      })
-      .style("font-size", 14) // Adjust font size as needed
-      .attr("fill", "white");
-  
-    // End of function
+        i++;
+      }
+      
+      labelPositions.push({ x: x, y: y }); // Store label position
+      return 'translate(' + x + ',' + y + ')';
+    })
+    .style('text-anchor', function(d) {
+      var pos = arc.centroid(d);
+      return (Math.cos(Math.atan2(pos[1], pos[0])) > 0) ? 'start' : 'end';
+    })
+    .style("font-size", 14) // Adjust font size as needed
+    .attr("fill", "white");
+
+  // End of function
 }
 
-  
   
 
 async function createTopTenContributorsChart() {
