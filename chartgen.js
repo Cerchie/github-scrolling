@@ -91,6 +91,9 @@ async function createLanguageChart() {
       var y = Math.sin(midAngle) * (radius + 50); // Initial label position
       
       // Check for overlap with previous labels
+      // Infinite Loop Risk: If adjustments do not sufficiently separate labels due to the dataset characteristics
+      // or other factors, the loop may continually restart (especially with the reset of i = 0). This could result 
+      //in a scenario where labels cannot be positioned with adequate separation, perpetually triggering adjustments.
       var overlapping = true;
       var i = 0;
       while (overlapping && i < labelPositions.length) {
@@ -297,16 +300,44 @@ async function createSizeChart() {
   var svgContainer = d3.select("#chart-0-container");
   var svg = svgContainer
     .append("svg")
-    .attr("width", 400) // Set a width for the SVG container
-    .attr("height", 200); // Set a height for the SVG container
+    .attr("width", 600) // Set a width for the SVG container
+    .attr("height", 400); // Set a height for the SVG container
 
-  // Append a group ('g') element to the SVG
-  var g = svg.append("g");
 
-  // Append text element to the group ('g')
-  g.append("text")
-    .attr("x", 50) // Adjust x position as needed
-    .attr("y", 50) // Adjust y position as needed
-    .text(data)
-    .attr("fill", "white"); // Set the text content
+// Define the dimensions and position of the text box
+var boxWidth = 300;
+var boxHeight = 200;
+var boxX = 50;
+var boxY = 50;
+var borderRadius = 10; // Optional: if you want rounded corners
+
+// Create a rectangle for the background
+var rect = svg.append("rect")
+  .attr("x", boxX)
+  .attr("y", boxY)
+  .attr("width", boxWidth)
+  .attr("height", boxHeight)
+  .attr("rx", borderRadius) // Rounded corners
+  .attr("ry", borderRadius)
+  .style("fill", "lightblue")
+  .style("stroke", "white")
+  .style("stroke-width", 2);
+
+// Add text inside the box
+var text = svg.append("text")
+  .attr("x", boxX + boxWidth / 2)
+  .attr("y", boxY + boxHeight / 2)
+  .style("font-size", "30px")
+  .style("fill", "white")
+  .text(data.toString() + " KB");
+
+
+// Adjust the position of the text relative to the box
+var textBBox = text.node().getBBox();
+var textWidth = textBBox.width;
+var textHeight = textBBox.height;
+
+// Center the text vertically and horizontally
+text.attr("x", boxX + boxWidth / 2 - textWidth / 2)
+    .attr("y", boxY + boxHeight / 2 - textHeight / 2);
 }
