@@ -77,8 +77,10 @@ async function createLanguageChart() {
     })
     .attr('stroke', 'white');
 
-  // Add labels with adjustments for overlap prevention and variable line heights
+  // Add labels with adjustments for overlap prevention
   var labelPositions = [];
+  var overlappingLabels = [];
+
   svg.selectAll('labels')
     .data(data_ready)
     .enter()
@@ -88,12 +90,10 @@ async function createLanguageChart() {
       var pos = arc.centroid(d);
       var midAngle = Math.atan2(pos[1], pos[0]);
       var x = Math.cos(midAngle) * (radius + 50); // Initial label position
-      var lineHeight = 20 + i * 15; // Adjust line height dynamically
+      var y = Math.sin(midAngle) * (radius + 50); // Initial label position
       
-      // Calculate y position with variable line height
-      var y = Math.sin(midAngle) * (radius + lineHeight);
-
       // Check for overlap with previous labels
+      var lineHeight = 20; // Minimum line height
       var overlapping = true;
       var j = 0;
       while (overlapping && j < labelPositions.length) {
@@ -101,18 +101,16 @@ async function createLanguageChart() {
         var dx = x - prevPos.x;
         var dy = y - prevPos.y;
         var distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < lineHeight) { // If labels are too close, adjust position
-          var newAngle = midAngle + (Math.PI / 4); // Adjust angle for separation
-          x = Math.cos(newAngle) * (radius + 50);
-          y = Math.sin(newAngle) * (radius + lineHeight);
-          j = 0; // Restart comparison from beginning
-        } else {
-          overlapping = false; // No overlap found, proceed
+        if (distance < lineHeight) { // If labels are too close, add to overlapping list
+          overlappingLabels.push(d.data.language);
+          overlapping = false; // Stop checking for this label
         }
         j++;
       }
       
-      labelPositions.push({ x: x, y: y }); // Store label position
+      // Store label position
+      labelPositions.push({ x: x, y: y });
+      
       return 'translate(' + x + ',' + y + ')';
     })
     .style('text-anchor', function(d) {
@@ -122,8 +120,35 @@ async function createLanguageChart() {
     .style("font-size", 14) // Adjust font size as needed
     .attr("fill", "white");
 
+  // Display overlapping labels in a separate list
+  if (overlappingLabels.length > 0) {
+    var listMargin = 10;
+    var listX = width - margin + listMargin;
+    var listY = margin;
+    var listItemHeight = 20;
+
+    // Append list title
+    svg.append('text')
+      .text('Overlapping Labels:')
+      .attr('x', listX)
+      .attr('y', listY)
+      .attr('fill', 'white')
+      .style('font-weight', 'bold');
+
+    // Append list items
+    svg.selectAll('listItems')
+      .data(overlappingLabels)
+      .enter()
+      .append('text')
+      .text((d, i) => `${i + 1}. ${d}`)
+      .attr('x', listX)
+      .attr('y', (d, i) => listY + (i + 1) * listItemHeight)
+      .attr('fill', 'white');
+  }
+
   // End of function
 }
+
 
 
 async function createTopTenContributorsChart() {
