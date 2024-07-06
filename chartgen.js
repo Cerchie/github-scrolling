@@ -77,39 +77,39 @@ async function createLanguageChart() {
     })
     .attr('stroke', 'white');
 
-  // Add labels with adjustments for overlap prevention
+  // Add labels with adjustments for overlap prevention and variable line heights
   var labelPositions = [];
   svg.selectAll('labels')
     .data(data_ready)
     .enter()
     .append('text')
     .text(d => d.data.language)
-    .attr('transform', function(d) {
+    .attr('transform', function(d, i) {
       var pos = arc.centroid(d);
       var midAngle = Math.atan2(pos[1], pos[0]);
       var x = Math.cos(midAngle) * (radius + 50); // Initial label position
-      var y = Math.sin(midAngle) * (radius + 50); // Initial label position
+      var lineHeight = 20 + i * 15; // Adjust line height dynamically
       
+      // Calculate y position with variable line height
+      var y = Math.sin(midAngle) * (radius + lineHeight);
+
       // Check for overlap with previous labels
-      // Infinite Loop Risk: If adjustments do not sufficiently separate labels due to the dataset characteristics
-      // or other factors, the loop may continually restart (especially with the reset of i = 0). This could result 
-      //in a scenario where labels cannot be positioned with adequate separation, perpetually triggering adjustments.
       var overlapping = true;
-      var i = 0;
-      while (overlapping && i < labelPositions.length) {
-        var prevPos = labelPositions[i];
+      var j = 0;
+      while (overlapping && j < labelPositions.length) {
+        var prevPos = labelPositions[j];
         var dx = x - prevPos.x;
         var dy = y - prevPos.y;
         var distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < 20) { // If labels are too close, adjust position
+        if (distance < lineHeight) { // If labels are too close, adjust position
           var newAngle = midAngle + (Math.PI / 4); // Adjust angle for separation
           x = Math.cos(newAngle) * (radius + 50);
-          y = Math.sin(newAngle) * (radius + 50);
-          i = 0; // Restart comparison from beginning
+          y = Math.sin(newAngle) * (radius + lineHeight);
+          j = 0; // Restart comparison from beginning
         } else {
           overlapping = false; // No overlap found, proceed
         }
-        i++;
+        j++;
       }
       
       labelPositions.push({ x: x, y: y }); // Store label position
@@ -125,7 +125,6 @@ async function createLanguageChart() {
   // End of function
 }
 
-  
 
 async function createTopTenContributorsChart() {
   // set the dimensions and margins of the graph
