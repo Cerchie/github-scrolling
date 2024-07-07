@@ -68,12 +68,16 @@ async function createLanguageChart() {
     .attr("stroke", "black")
     .style("stroke-width", "2px");
 
-  // Add labels
+  // Add labels with percentages
   svg.selectAll('labels')
     .data(data_ready)
     .enter()
     .append('text')
-    .text(d => d.data.language)
+    .text(function(d) {
+      // Calculate percentage and format label
+      var percentage = ((d.data.count / total) * 100).toFixed(1); // Calculate percentage with one decimal
+      return `${d.data.language} (${percentage}%)`;
+    })
     .attr('transform', function(d) {
       var pos = arc.centroid(d);
       var midAngle = Math.atan2(pos[1], pos[0]);
