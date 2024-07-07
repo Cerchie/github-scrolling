@@ -118,7 +118,8 @@ async function createLanguageChart() {
       return (Math.cos(Math.atan2(pos[1], pos[0])) > 0) ? 'start' : 'end';
     })
     .style("font-size", 14) // Adjust font size as needed
-    .attr("fill", "white");
+    .attr("fill", "white")
+    .classed('label', true);
 
   // Display overlapping labels in a separate list
   if (overlappingLabels.length > 0) {
@@ -132,7 +133,7 @@ async function createLanguageChart() {
       .text('Overlapping Labels:')
       .attr('x', listX)
       .attr('y', listY)
-      .attr('fill', 'white')
+      .attr('fill', 'black')
       .style('font-weight', 'bold');
 
     // Append list items
@@ -143,11 +144,13 @@ async function createLanguageChart() {
       .text((d, i) => `${i + 1}. ${d}`)
       .attr('x', listX)
       .attr('y', (d, i) => listY + (i + 1) * listItemHeight)
-      .attr('fill', 'white');
+      .attr('fill', 'white')
+      .classed('list-item', true);
   }
 
   // End of function
 }
+
 
 
 
