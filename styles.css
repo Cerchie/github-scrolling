@@ -20,6 +20,8 @@ h3 {
 
 }
 
+
+
 /* Container styles */
 .container {
   max-width: 960px;
@@ -153,6 +155,7 @@ div {
 section {
   margin-bottom: 40px;
 }
+
 
 /* Text content styles */
 p {

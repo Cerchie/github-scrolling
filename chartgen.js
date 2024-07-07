@@ -26,20 +26,32 @@ async function createLanguageChart() {
     count: languages[key]
   }));
 
+  // Calculate total count of all languages
+  var total = d3.sum(data, d => d.count);
+
+  // Filter out languages that make up less than 5% of the total
+  var filteredData = data.filter(d => (d.count / total) >= 0.05);
+
+  // Sum up counts of languages that make up less than 5% and group into "Other"
+  var otherCount = d3.sum(data, d => (d.count / total) < 0.05 ? d.count : 0);
+  if (otherCount > 0) {
+    filteredData.push({ language: "Other", count: otherCount });
+  }
+
   // Sort data by count descending
-  data.sort((a, b) => b.count - a.count);
+  filteredData.sort((a, b) => b.count - a.count);
 
   // Define color scale
   var customRange = d3.schemeCategory10; // Using a predefined D3 color scheme
   var color = d3.scaleOrdinal()
-    .domain(data.map(d => d.language))
+    .domain(filteredData.map(d => d.language))
     .range(customRange);
 
   // Compute the position of each group on the pie:
   var pie = d3.pie()
     .value(d => d.count);
 
-  var data_ready = pie(data);
+  var data_ready = pie(filteredData);
 
   // Define the arc generator
   var arc = d3.arc()
@@ -56,61 +68,17 @@ async function createLanguageChart() {
     .attr("stroke", "black")
     .style("stroke-width", "2px");
 
-  // Add lines
-  svg.selectAll('lines')
-    .data(data_ready)
-    .enter()
-    .append('line')
-    .attr('x1', d => arc.centroid(d)[0])
-    .attr('y1', d => arc.centroid(d)[1])
-    .attr('x2', function(d) {
-      var pos = arc.centroid(d);
-      var midAngle = Math.atan2(pos[1], pos[0]);
-      var x = Math.cos(midAngle) * (radius + 30);
-      return x;
-    })
-    .attr('y2', function(d) {
-      var pos = arc.centroid(d);
-      var midAngle = Math.atan2(pos[1], pos[0]);
-      var y = Math.sin(midAngle) * (radius + 30);
-      return y;
-    })
-    .attr('stroke', 'white');
-
-  // Add labels with adjustments for overlap prevention
-  var labelPositions = [];
-  var overlappingLabels = [];
-
+  // Add labels
   svg.selectAll('labels')
     .data(data_ready)
     .enter()
     .append('text')
     .text(d => d.data.language)
-    .attr('transform', function(d, i) {
+    .attr('transform', function(d) {
       var pos = arc.centroid(d);
       var midAngle = Math.atan2(pos[1], pos[0]);
       var x = Math.cos(midAngle) * (radius + 50); // Initial label position
       var y = Math.sin(midAngle) * (radius + 50); // Initial label position
-      
-      // Check for overlap with previous labels
-      var lineHeight = 20; // Minimum line height
-      var overlapping = true;
-      var j = 0;
-      while (overlapping && j < labelPositions.length) {
-        var prevPos = labelPositions[j];
-        var dx = x - prevPos.x;
-        var dy = y - prevPos.y;
-        var distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < lineHeight) { // If labels are too close, add to overlapping list
-          overlappingLabels.push(d.data.language);
-          overlapping = false; // Stop checking for this label
-        }
-        j++;
-      }
-      
-      // Store label position
-      labelPositions.push({ x: x, y: y });
-      
       return 'translate(' + x + ',' + y + ')';
     })
     .style('text-anchor', function(d) {
@@ -118,39 +86,10 @@ async function createLanguageChart() {
       return (Math.cos(Math.atan2(pos[1], pos[0])) > 0) ? 'start' : 'end';
     })
     .style("font-size", 14) // Adjust font size as needed
-    .attr("fill", "white")
-    .classed('label', true);
-
-  // Display overlapping labels in a separate list
-  if (overlappingLabels.length > 0) {
-    var listMargin = 10;
-    var listX = width - margin + listMargin;
-    var listY = margin;
-    var listItemHeight = 20;
-
-    // Append list title
-    svg.append('text')
-      .text('Overlapping Labels:')
-      .attr('x', listX)
-      .attr('y', listY)
-      .attr('fill', 'black')
-      .style('font-weight', 'bold');
-
-    // Append list items
-    svg.selectAll('listItems')
-      .data(overlappingLabels)
-      .enter()
-      .append('text')
-      .text((d, i) => `${i + 1}. ${d}`)
-      .attr('x', listX)
-      .attr('y', (d, i) => listY + (i + 1) * listItemHeight)
-      .attr('fill', 'white')
-      .classed('list-item', true);
-  }
+    .attr("fill", "white");
 
   // End of function
 }
-
 
 
 
