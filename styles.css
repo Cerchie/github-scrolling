@@ -138,6 +138,16 @@ div {
   width: 40%;
 }
 
+/* CSS for fading in and out .step elements */
+.step {
+  opacity: 0; /* Initially hide all steps */
+  transition: opacity 0.5s ease; /* Smooth transition for opacity changes */
+}
+.step.active {
+  opacity: 1; /* Show active step */
+}
+
+
 #chart {
   width: 50%;
   margin-right: 5px;
