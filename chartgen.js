@@ -89,7 +89,7 @@ async function createLanguageChart() {
       var pos = arc.centroid(d);
       return (Math.cos(Math.atan2(pos[1], pos[0])) > 0) ? 'start' : 'end';
     })
-    .style("font-size", 14) // Adjust font size as needed
+    .style("font-size", 24) // Adjust font size as needed
     .attr("fill", "white");
 
   // End of function
@@ -99,7 +99,7 @@ async function createLanguageChart() {
 
 async function createTopTenContributorsChart() {
   // set the dimensions and margins of the graph
-  var margin = { top: 30, right: 30, bottom: 70, left: 30 },
+  var margin = { top: 30, right: 90, bottom: 150, left: 90 },
     width = 500 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
   d3.select("svg").remove();
@@ -119,12 +119,7 @@ async function createTopTenContributorsChart() {
 
   // append the svg object to the body of the page
 
-  // Parse the Data
-  console.log(
-    data.map(function (d) {
-      return d.login;
-    }),
-  );
+
   // X axis
   var x = d3
     .scaleBand()
@@ -142,7 +137,8 @@ async function createTopTenContributorsChart() {
     .call(d3.axisBottom(x))
     .selectAll("text")
     .attr("transform", "translate(-10,0)rotate(-45)")
-    .style("text-anchor", "end");
+    .style("text-anchor", "end")
+    .style("font-size", 24);
 
   let maxContributions = d3.max(
     data.map(function (d) {
@@ -152,7 +148,7 @@ async function createTopTenContributorsChart() {
   // Add Y axis
   var y = d3.scaleLinear().domain([0, maxContributions]).range([height, 0]);
 
-  svg.append("g").call(d3.axisLeft(y));
+  svg.append("g").call(d3.axisLeft(y)).style("font-size", 24);;
 
   // Bars
   svg

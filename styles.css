@@ -8,6 +8,18 @@ body {
   background-color: black; /* Light background color */
 }
 
+text{
+    font-family: "Averia Serif Libre", serif;
+    font-weight: 300;
+    font-style: normal;
+
+}
+
+svg {
+  margin: 1em;
+  padding: 1em;
+}
+
 /* Heading styles */
 
 h2,
