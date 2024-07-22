@@ -235,28 +235,26 @@ async function createLengthActiveChart() {
   const endDateStr = data.pushed_at;
 
   const duration = calculateDuration(startDateStr, endDateStr);
-  console.log("DURATION", duration);
 
-  console.log("LENGTH ACTIVE", data);
   var svgContainer = d3.select("#chart-0-container");
 
   var svg = svgContainer
     .append("svg")
-    .attr("width", 400) // Set a width for the SVG container
+    .attr("width", 800) // Set a width for the SVG container
     .attr("height", 200); // Set a height for the SVG container
 
   // Append a group ('g') element to the SVG
   var g = svg.append("g");
-console.log(duration);
+
   // Append text element to the group ('g')
   g.append("text")
     .attr("x", 50) // Adjust x position as needed
     .attr("y", 50) // Adjust y position as needed
     .text(
         duration.years + " years, " +
-        duration.months + "months, " +
+        duration.months + " months, " +
         duration.days + " days"
-    ).attr("fill", "white"); 
+    ).attr("fill", "white").style("font-size", 60); 
 }
 
 async function createSizeChart() {
