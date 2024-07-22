@@ -247,14 +247,14 @@ async function createLengthActiveChart() {
 
   // Append a group ('g') element to the SVG
   var g = svg.append("g");
-
+console.log(duration);
   // Append text element to the group ('g')
   g.append("text")
     .attr("x", 50) // Adjust x position as needed
     .attr("y", 50) // Adjust y position as needed
     .text(
-        duration.years + " years ",
-        duration.months + "months ",
+        duration.years + " years, " +
+        duration.months + "months, " +
         duration.days + " days"
     ).attr("fill", "white"); 
 }
