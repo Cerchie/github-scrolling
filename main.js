@@ -51,9 +51,7 @@ function handleStepEnter(response) {
 
   // Update the current step index
   currentStepIndex = index;
-  // Show the chart for the current step
-  d3.select("#chart-" + index).style("opacity", 1);
-  // Highlight the current step
+
   // Add 'active' class to the current step to fade it in
   d3.select(steps.nodes()[index]).classed("active", true);
 
@@ -61,13 +59,11 @@ function handleStepEnter(response) {
 }
 
 // Callback function for onStepExit
-// Callback function for onStepExit
 function handleStepExit(response) {
   const index = response.index;
+
   // Remove 'active' class from the current step to fade it out
   d3.select(steps.nodes()[index]).classed("active", false);
-  // Hide the current chart on exit
-  d3.select("#chart-" + index).style("opacity", 0);
 
   console.log("exit", response);
 }
