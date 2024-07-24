@@ -16,9 +16,9 @@ f.addEventListener("submit", async (event) => {
   owner = chosenOwner;
   const chosenRepo = document.getElementById("repo").value;
   repo = chosenRepo;
+  console.log(chosenOwner, chosenRepo);
 
   try {
-    // Fetch all required data from GitHub API
     const [languages, topTenContributors, stargazersAndForks, size, lengthActive] = await Promise.all([
       responseData.getLanguages(owner, repo),
       responseData.getTopTenContributors(owner, repo),
@@ -26,27 +26,16 @@ f.addEventListener("submit", async (event) => {
       responseData.getSize(owner, repo),
       responseData.getLengthActive(owner, repo)
     ]);
+    console.log([languages, topTenContributors, stargazersAndForks, size, lengthActive])
 
-    // Call the chart creation functions with fetched data
-    createLanguageChart(languages);
-    createTopTenContributorsChart(topTenContributors);
-    createStargazersAndForksChart(stargazersAndForks);
-    createSizeChart(size);
-    createLengthActiveChart(lengthActive);
-  } catch (error) {
-    console.error('Failed to fetch data from GitHub API:', error);
-  }
-});
-
-// Instantiate the scrollama
 const scroller = scrollama();
 
-const callbacks = [
-  createLanguageChart,
-  createTopTenContributorsChart,
-  createStargazersAndForksChart,
-  createLengthActiveChart,
-  createSizeChart,
+const callbacksWithData = [
+  { callback: createLanguageChart, data: languages },
+  { callback: createTopTenContributorsChart, data: topTenContributors },
+  { callback: createStargazersAndForksChart, data: stargazersAndForks },
+  { callback: createLengthActiveChart, data: lengthActive },
+  { callback: createSizeChart, data: size }
 ];
 
 const steps = d3.selectAll(".step");
@@ -63,16 +52,20 @@ let currentStepIndex = -1; // Variable to keep track of the current step index
 
 // Callback function for onStepEnter
 function handleStepEnter(response) {
+
   const index = response.index;
 
-  // Reset SVG content based on the chart type (assuming callbacks[index] corresponds to createLanguageChart or createTopTenContributorsChart)
-  callbacks[index]();
+  const { callback, data } = callbacksWithData[index];
 
-  // Update the current step index
+  if (callback && data) {
+    callback(data); 
+    d3.select(steps.nodes()[index]).classed("active", true); 
+    console.log("enter", response);
+  } else {
+    console.log("Error: Invalid index or missing callback or data.");
+  }
+
   currentStepIndex = index;
-
-  // Add 'active' class to the current step to fade it in
-  d3.select(steps.nodes()[index]).classed("active", true);
 
   console.log("enter", response);
 }
@@ -87,3 +80,7 @@ function handleStepExit(response) {
   console.log("exit", response);
 }
 
+  } catch (error) {
+    console.error('Failed to fetch data from GitHub API:', error);
+  }
+  });
