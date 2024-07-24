@@ -12,31 +12,30 @@ async function createLanguageChart() {
 
   // Append the svg object to the div called 'chart-0-container'
   const svg = d3
-  .select("#chart-0-container")
-  .append("svg")
-  .attr("id", "chart-0")
-  .attr("width", "100%") // Set width to 100% for responsiveness
-  .attr("height", "100%") // Set height to 100% for responsiveness
-  .attr("preserveAspectRatio", "xMidYMid meet") // Preserve aspect ratio
-  .attr("viewBox", `0 0 ${width} ${height}`) // Define viewBox for scaling
-  .append("g")
-  .attr("transform", `translate(${width / 2},${height / 2})`);
-
+    .select("#chart-0-container")
+    .append("svg")
+    .attr("id", "chart-0")
+    .attr("width", "100%") // Set width to 100% for responsiveness
+    .attr("height", "100%") // Set height to 100% for responsiveness
+    .attr("preserveAspectRatio", "xMidYMid meet") // Preserve aspect ratio
+    .attr("viewBox", `0 0 ${width} ${height}`) // Define viewBox for scaling
+    .append("g")
+    .attr("transform", `translate(${width / 2},${height / 2})`);
 
   // Extract the data from the object into an array of { language: name, count: value }
-  var data = Object.keys(languages).map(key => ({
+  var data = Object.keys(languages).map((key) => ({
     language: key,
-    count: languages[key]
+    count: languages[key],
   }));
 
   // Calculate total count of all languages
-  var total = d3.sum(data, d => d.count);
+  var total = d3.sum(data, (d) => d.count);
 
   // Filter out languages that make up less than 5% of the total
-  var filteredData = data.filter(d => (d.count / total) >= 0.05);
+  var filteredData = data.filter((d) => (d.count / total) >= 0.05);
 
   // Sum up counts of languages that make up less than 5% and group into "Other"
-  var otherCount = d3.sum(data, d => (d.count / total) < 0.05 ? d.count : 0);
+  var otherCount = d3.sum(data, (d) => (d.count / total) < 0.05 ? d.count : 0);
   if (otherCount > 0) {
     filteredData.push({ language: "Other", count: otherCount });
   }
@@ -47,19 +46,16 @@ async function createLanguageChart() {
   // Define color scale
   var customRange = d3.schemeCategory10; // Using a predefined D3 color scheme
   var color = d3.scaleOrdinal()
-    .domain(filteredData.map(d => d.language))
+    .domain(filteredData.map((d) => d.language))
     .range(customRange);
 
   // Compute the position of each group on the pie:
-  var pie = d3.pie()
-    .value(d => d.count);
+  var pie = d3.pie().value((d) => d.count);
 
   var data_ready = pie(filteredData);
 
   // Define the arc generator
-  var arc = d3.arc()
-    .innerRadius(0)
-    .outerRadius(radius);
+  var arc = d3.arc().innerRadius(0).outerRadius(radius);
 
   // Build the pie chart
   var arcs = svg.selectAll("pieces")
@@ -67,33 +63,62 @@ async function createLanguageChart() {
     .enter()
     .append("path")
     .attr("d", arc)
-    .attr("fill", d => color(d.data.language))
+    .attr("fill", (d) => color(d.data.language))
     .attr("stroke", "black")
     .style("stroke-width", "2px");
 
   // Add labels with percentages
-  svg.selectAll('labels')
+  var labels = svg.selectAll("labels")
     .data(data_ready)
     .enter()
-    .append('text')
+    .append("text")
     .text(function(d) {
       // Calculate percentage and format label
-      var percentage = ((d.data.count / total) * 100).toFixed(1); // Calculate percentage with one decimal
+      var percentage = ((d.data.count / total) * 100).toFixed(1);
       return `${d.data.language} (${percentage}%)`;
     })
-    .attr('transform', function(d) {
+    .attr("transform", function(d) {
       var pos = arc.centroid(d);
       var midAngle = Math.atan2(pos[1], pos[0]);
-      var x = Math.cos(midAngle) * (radius + 50); // Initial label position
-      var y = Math.sin(midAngle) * (radius + 50); // Initial label position
-      return 'translate(' + x + ',' + y + ')';
+      var x = Math.cos(midAngle) * (radius + 50);
+      var y = Math.sin(midAngle) * (radius + 50);
+      return `translate(${x},${y})`;
     })
-    .style('text-anchor', function(d) {
+    .style("text-anchor", function(d) {
       var pos = arc.centroid(d);
-      return (Math.cos(Math.atan2(pos[1], pos[0])) > 0) ? 'start' : 'end';
+      return Math.cos(Math.atan2(pos[1], pos[0])) > 0 ? "start" : "end";
     })
-    .style("font-size", 24) // Adjust font size as needed
+    .style("font-size", 16)
     .attr("fill", "white");
+
+  // Function to check and adjust label positions
+  function adjustLabelPositions() {
+    var labelNodes = labels.nodes();
+    var labelBoxes = labelNodes.map(function(labelNode) {
+      return labelNode.getBBox();
+    });
+
+    for (var i = 0; i < labelBoxes.length; i++) {
+      for (var j = i + 1; j < labelBoxes.length; j++) {
+        if (isOverlapping(labelBoxes[i], labelBoxes[j])) {
+          var newY = labelBoxes[j].y + labelBoxes[j].height + 100; // Adjust vertical spacing
+          d3.select(labelNodes[j]).attr("transform", `translate(${labelBoxes[j].x},${newY})`);
+          labelBoxes[j].y = newY;
+        }
+      }
+    }
+  }
+
+  // Helper function to check if two bounding boxes overlap
+  function isOverlapping(box1, box2) {
+    return !(box1.x + box1.width < box2.x ||
+             box2.x + box2.width < box1.x ||
+             box1.y + box1.height < box2.y ||
+             box2.y + box2.height < box1.y);
+  }
+
+  // Call adjustLabelPositions initially and after a delay to allow rendering
+  setTimeout(adjustLabelPositions, 10); // Adjust timing as needed based on rendering speed
 
   // End of function
 }
