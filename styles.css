@@ -167,12 +167,10 @@ div {
 
 #chart-0-container {
   flex: 1; /* Take up remaining vertical space */
-  min-width: 300px; /* Minimum width for the chart container */
   position: sticky;
   top: 0px;
   left: 0px;
-  width: 400px;
-  height: 400px;
+  margin: 1em;
 }
 
 .step {
@@ -183,7 +181,9 @@ div {
 
 /* Section styles */
 section {
-  margin-bottom: 40px;
+  display: flex; /* Use flexbox to manage children */
+  justify-content: space-between; /* Ensure space between divs */
+  align-items: flex-start; /* Align items at the top */
 }
 
 

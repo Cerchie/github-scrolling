@@ -12,13 +12,16 @@ async function createLanguageChart() {
 
   // Append the svg object to the div called 'chart-0-container'
   const svg = d3
-    .select("#chart-0-container")
-    .append("svg")
-    .attr("id", "chart-0")
-    .attr("width", width)
-    .attr("height", height)
-    .append("g")
-    .attr("transform", `translate(${width / 2},${height / 2})`);
+  .select("#chart-0-container")
+  .append("svg")
+  .attr("id", "chart-0")
+  .attr("width", "100%") // Set width to 100% for responsiveness
+  .attr("height", "100%") // Set height to 100% for responsiveness
+  .attr("preserveAspectRatio", "xMidYMid meet") // Preserve aspect ratio
+  .attr("viewBox", `0 0 ${width} ${height}`) // Define viewBox for scaling
+  .append("g")
+  .attr("transform", `translate(${width / 2},${height / 2})`);
+
 
   // Extract the data from the object into an array of { language: name, count: value }
   var data = Object.keys(languages).map(key => ({
