@@ -132,9 +132,14 @@ div {
 
 .holder {
   display: flex;
+  flex-direction: column; /* Arrange children vertically */
+  gap: 20px; /* Vertical gap between children */
 }
 
 .steps {
+  display: flex;
+  flex-direction: column; /* Arrange steps vertically */
+  gap: 10px; /* Vertical gap between steps */
   width: 40%;
 }
 
@@ -159,6 +164,8 @@ div {
 }
 
 #chart-0-container {
+  flex: 1; /* Take up remaining vertical space */
+  min-width: 300px; /* Minimum width for the chart container */
   width: 50%;
   margin-right: 5px;
   position: sticky;
