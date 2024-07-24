@@ -1,5 +1,4 @@
-async function createLanguageChart() {
-  const languages = await responseData.getLanguages(owner, repo);
+async function createLanguageChart(languages) {
 
   d3.select("svg").remove();
 
@@ -111,7 +110,7 @@ async function createLanguageChart() {
 
 
 
-async function createTopTenContributorsChart() {
+async function createTopTenContributorsChart(data) {
   var margin = { top: 20, right: 20, bottom: 150, left: 90 },
     width = 500 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
@@ -129,7 +128,6 @@ async function createTopTenContributorsChart() {
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  const data = await responseData.getTopTenContributors(owner, repo);
 
   var x = d3
     .scaleBand()
@@ -180,8 +178,7 @@ async function createTopTenContributorsChart() {
 
 //end top ten contributors function
 
-async function createStargazersAndForksChart() {
-  const response = await responseData.getStargazersAndForks(owner, repo);
+async function createStargazersAndForksChart(response) {
 
   d3.select("svg").remove();
 
@@ -245,9 +242,8 @@ async function createStargazersAndForksChart() {
 
 
 
-async function createLengthActiveChart() {
+async function createLengthActiveChart(data) {
   d3.select("svg").remove();
-  const data = await responseData.getLengthActive(owner, repo);
 
   function calculateDuration(startDateStr, endDateStr) {
     const startDate = new Date(startDateStr);
@@ -288,8 +284,7 @@ async function createLengthActiveChart() {
     ).attr("fill", "white").style("font-size", 60); 
 }
 
-async function createSizeChart() {
-  const data = await responseData.getSize(owner, repo);
+async function createSizeChart(data) {
   d3.select("svg").remove();
 
   var svgContainer = d3.select("#chart-0-container");

@@ -4,7 +4,6 @@ const height = 400;
 let owner = "";
 let repo = "";
 
-
 const responseData = new ResponseData();
 
 const f = document.getElementById("repo_owner_form");
@@ -18,10 +17,28 @@ f.addEventListener("submit", async (event) => {
   const chosenRepo = document.getElementById("repo").value;
   repo = chosenRepo;
 
-  responseData.getRepo(owner, repo);
+  try {
+    // Fetch all required data from GitHub API
+    const [languages, topTenContributors, stargazersAndForks, size, lengthActive] = await Promise.all([
+      responseData.getLanguages(owner, repo),
+      responseData.getTopTenContributors(owner, repo),
+      responseData.getStargazersAndForks(owner, repo),
+      responseData.getSize(owner, repo),
+      responseData.getLengthActive(owner, repo)
+    ]);
+
+    // Call the chart creation functions with fetched data
+    createLanguageChart(languages);
+    createTopTenContributorsChart(topTenContributors);
+    createStargazersAndForksChart(stargazersAndForks);
+    createSizeChart(size);
+    createLengthActiveChart(lengthActive);
+  } catch (error) {
+    console.error('Failed to fetch data from GitHub API:', error);
+  }
 });
 
-// instantiate the scrollama
+// Instantiate the scrollama
 const scroller = scrollama();
 
 const callbacks = [
@@ -31,8 +48,10 @@ const callbacks = [
   createLengthActiveChart,
   createSizeChart,
 ];
+
 const steps = d3.selectAll(".step");
-// setup the instance, pass callback functions
+
+// Setup the instance, pass callback functions
 scroller
   .setup({
     step: ".step",
@@ -67,3 +86,4 @@ function handleStepExit(response) {
 
   console.log("exit", response);
 }
+
