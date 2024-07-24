@@ -102,7 +102,7 @@ async function createLanguageChart() {
 
 async function createTopTenContributorsChart() {
   // set the dimensions and margins of the graph
-  var margin = { top: 30, right: 90, bottom: 150, left: 90 },
+  var margin = { top: 20, right: 20, bottom: 150, left: 90 },
     width = 500 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
   d3.select("svg").remove();
@@ -120,13 +120,8 @@ async function createTopTenContributorsChart() {
     .attr("height", svgHeight)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-  //TODO: IMPLEMENT SAME STRATEGY AS IN createLanguageChart
 
   const data = await responseData.getTopTenContributors(owner, repo);
-  console.log(data);
-
-  // append the svg object to the body of the page
-
 
   // X axis
   var x = d3
@@ -174,52 +169,86 @@ async function createTopTenContributorsChart() {
     .attr("height", function (d) {
       return height - y(d.contributions);
     })
-    .attr("fill", "#69b3a2");
+    .attr("fill", "palegreen");
 }
 
 //end top ten contributors function
-async function createStargazersAndForksChart() {
-  var margin = { top: 30, right: 30, bottom: 70, left: 30 },
-    width = 800 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
 
+async function createStargazersAndForksChart() {
+  // Fetch stargazers and forks data asynchronously
   const response = await responseData.getStargazersAndForks(owner, repo);
 
+  // Remove any existing SVG to start fresh
   d3.select("svg").remove();
 
+  // Set the dimensions and margins of the graph
+  var margin = { top: 20, right: 20, bottom: 150, left: 90 },
+      width = 500 - margin.left - margin.right,
+      height = 400 - margin.top - margin.bottom;
+
+  // Adjusted width and height to fit within the container
+  var svgWidth = width + margin.left + margin.right;
+  var svgHeight = height + margin.top + margin.bottom;
+  
+  // Select the container for the chart
   var svgContainer = d3.select("#chart-0-container");
 
-  let data = [response.stargazers_count, response.forks_count];
-
-  let min = d3.min(data);
-  let max = d3.max(data);
-  let scale = d3.scaleSqrt().domain([min, max]).range([10, 20]);
-
-  let svg = svgContainer
+  // Append a new SVG for the chart
+  var svg = svgContainer
     .append("svg")
-    .selectAll("g")
     .attr("id", "chart-2")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .data(data)
-    .enter()
+    .attr("width", svgWidth)
+    .attr("height", svgHeight)
     .append("g")
-    .attr("transform", (d, i) => "translate(" + (i * 200 + 50) + ", 50)");
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  svg.append("circle").attr("r", scale).attr("fill", "#ccc");
+  // Construct data array from the response
+  let data = [
+    { label: "Stargazers", value: response.stargazers_count },
+    { label: "Forks", value: response.forks_count }
+  ];
 
-  svg
-    .append("text")
-    .text(
-      (d) =>
-        d + " " + (d === response.stargazers_count ? "Stargazers" : "Forks"),
-    )
-    .attr("fill", "black")
-    .attr("text-anchor", "middle")
-    .attr("dy", -20)
-    .attr("fill", "white");
-  console.log(data);
+  // X axis
+  var x = d3.scaleBand()
+    .range([0, width])
+    .domain(data.map(d => d.label))
+    .padding(0.2);
+
+  svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x))
+    .selectAll("text")
+    .attr("transform", "translate(-10,0)rotate(-45)")
+    .style("text-anchor", "end")
+    .style("font-size", 16);
+
+  // Y axis
+  var y = d3.scaleLinear()
+    .domain([0, d3.max(data, d => d.value)])
+    .nice()
+    .range([height, 0]);
+
+  svg.append("g")
+    .call(d3.axisLeft(y))
+    .style("font-size", 16);
+
+  // Bars
+  svg.selectAll(".bar")
+    .data(data)
+    .enter().append("rect")
+    .attr("class", "bar")
+    .attr("x", d => x(d.label))
+    .attr("y", d => y(d.value))
+    .attr("width", x.bandwidth())
+    .attr("height", d => height - y(d.value))
+    .attr("fill", "lightblue");
+
+  // Optional: Add chart title or other annotations
+
 }
+
+
+
 async function createLengthActiveChart() {
   d3.select("svg").remove();
   const data = await responseData.getLengthActive(owner, repo);
