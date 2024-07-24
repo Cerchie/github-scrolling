@@ -130,13 +130,15 @@ div {
   line-height: 1.6em;
 }
 
-.holder {
+/* .holder {
   display: flex;
-  flex-direction: column; /* Arrange children vertically */
-  gap: 20px; /* Vertical gap between children */
-}
+  flex-direction: column; 
+  gap: 20px; 
+} */
 
 .steps {
+  margin-left: 0;
+  margin-right: 0;
   display: flex;
   flex-direction: column; /* Arrange steps vertically */
   gap: 10px; /* Vertical gap between steps */
@@ -166,8 +168,6 @@ div {
 #chart-0-container {
   flex: 1; /* Take up remaining vertical space */
   min-width: 300px; /* Minimum width for the chart container */
-  width: 50%;
-  margin-right: 5px;
   position: sticky;
   top: 0px;
   left: 0px;
@@ -178,6 +178,7 @@ div {
 .step {
   margin-top: 50px;
   min-height: 600px;
+  padding: 1em;
 }
 
 /* Section styles */
