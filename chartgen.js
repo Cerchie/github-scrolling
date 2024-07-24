@@ -106,17 +106,22 @@ async function createTopTenContributorsChart() {
     width = 500 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
   d3.select("svg").remove();
-  // Select the container where you want to append #chart-1
   var svgContainer = d3.select("#chart-0-container");
 
+  // Adjusted width and height to fit within the container
+  var svgWidth = width + margin.left + margin.right;
+  var svgHeight = height + margin.top + margin.bottom;
+  
   // Append a new SVG for #chart-1
   var svg = svgContainer
     .append("svg")
     .attr("id", "chart-1")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("width", svgWidth)
+    .attr("height", svgHeight)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  //TODO: IMPLEMENT SAME STRATEGY AS IN createLanguageChart
+
   const data = await responseData.getTopTenContributors(owner, repo);
   console.log(data);
 

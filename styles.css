@@ -157,7 +157,6 @@ div {
 
 #chart {
   width: 50%;
-  margin-right: 5px;
   position: sticky;
   top: 0px;
   left: 0px;
@@ -170,13 +169,11 @@ div {
   position: sticky;
   top: 0px;
   left: 0px;
-  margin: 1em;
 }
 
 .step {
   margin-top: 50px;
   min-height: 600px;
-  padding: 1em;
 }
 
 /* Section styles */
