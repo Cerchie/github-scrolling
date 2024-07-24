@@ -1,37 +1,32 @@
 async function createLanguageChart() {
   const languages = await responseData.getLanguages(owner, repo);
+
   d3.select("svg").remove();
 
-  // Set the dimensions and margins of the graph
-  var width = 600; // Adjusted for better visibility
-  var height = 600; // Adjusted for better visibility
+  var width = 600; 
+  var height = 600; 
   var margin = 100;
 
-  // The radius of the pieplot is half the width or height (whichever is smaller)
   var radius = Math.min(width, height) / 2 - margin;
 
-  // Append the svg object to the div called 'chart-0-container'
   const svg = d3
     .select("#chart-0-container")
     .append("svg")
     .attr("id", "chart-0")
-    .attr("width", "100%") // Set width to 100% for responsiveness
-    .attr("height", "100%") // Set height to 100% for responsiveness
-    .attr("preserveAspectRatio", "xMidYMid meet") // Preserve aspect ratio
-    .attr("viewBox", `0 0 ${width} ${height}`) // Define viewBox for scaling
+    .attr("width", "100%")
+    .attr("height", "100%") 
+    .attr("preserveAspectRatio", "xMidYMid meet") 
+    .attr("viewBox", `0 0 ${width} ${height}`) 
     .append("g")
     .attr("transform", `translate(${width / 2},${height / 2})`);
 
-  // Extract the data from the object into an array of { language: name, count: value }
   var data = Object.keys(languages).map((key) => ({
     language: key,
     count: languages[key],
   }));
 
-  // Calculate total count of all languages
   var total = d3.sum(data, (d) => d.count);
 
-  // Filter out languages that make up less than 5% of the total
   var filteredData = data.filter((d) => (d.count / total) >= 0.05);
 
   // Sum up counts of languages that make up less than 5% and group into "Other"
@@ -40,24 +35,19 @@ async function createLanguageChart() {
     filteredData.push({ language: "Other", count: otherCount });
   }
 
-  // Sort data by count descending
   filteredData.sort((a, b) => b.count - a.count);
 
-  // Define color scale
   var customRange = d3.schemeCategory10; // Using a predefined D3 color scheme
   var color = d3.scaleOrdinal()
     .domain(filteredData.map((d) => d.language))
     .range(customRange);
 
-  // Compute the position of each group on the pie:
   var pie = d3.pie().value((d) => d.count);
 
   var data_ready = pie(filteredData);
 
-  // Define the arc generator
   var arc = d3.arc().innerRadius(0).outerRadius(radius);
 
-  // Build the pie chart
   var arcs = svg.selectAll("pieces")
     .data(data_ready)
     .enter()
@@ -67,13 +57,11 @@ async function createLanguageChart() {
     .attr("stroke", "black")
     .style("stroke-width", "2px");
 
-  // Add labels with percentages
   var labels = svg.selectAll("labels")
     .data(data_ready)
     .enter()
     .append("text")
     .text(function(d) {
-      // Calculate percentage and format label
       var percentage = ((d.data.count / total) * 100).toFixed(1);
       return `${d.data.language} (${percentage}%)`;
     })
@@ -91,7 +79,6 @@ async function createLanguageChart() {
     .style("font-size", 16)
     .attr("fill", "white");
 
-  // Function to check and adjust label positions
   function adjustLabelPositions() {
     var labelNodes = labels.nodes();
     var labelBoxes = labelNodes.map(function(labelNode) {
@@ -109,7 +96,6 @@ async function createLanguageChart() {
     }
   }
 
-  // Helper function to check if two bounding boxes overlap
   function isOverlapping(box1, box2) {
     return !(box1.x + box1.width < box2.x ||
              box2.x + box2.width < box1.x ||
@@ -118,26 +104,23 @@ async function createLanguageChart() {
   }
 
   // Call adjustLabelPositions initially and after a delay to allow rendering
-  setTimeout(adjustLabelPositions, 10); // Adjust timing as needed based on rendering speed
+  setTimeout(adjustLabelPositions, 10); 
 
-  // End of function
+  // End of language function
 }
 
 
 
 async function createTopTenContributorsChart() {
-  // set the dimensions and margins of the graph
   var margin = { top: 20, right: 20, bottom: 150, left: 90 },
     width = 500 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
   d3.select("svg").remove();
   var svgContainer = d3.select("#chart-0-container");
 
-  // Adjusted width and height to fit within the container
   var svgWidth = width + margin.left + margin.right;
   var svgHeight = height + margin.top + margin.bottom;
   
-  // Append a new SVG for #chart-1
   var svg = svgContainer
     .append("svg")
     .attr("id", "chart-1")
@@ -148,7 +131,6 @@ async function createTopTenContributorsChart() {
 
   const data = await responseData.getTopTenContributors(owner, repo);
 
-  // X axis
   var x = d3
     .scaleBand()
     .range([0, width])
@@ -173,12 +155,11 @@ async function createTopTenContributorsChart() {
       return d.contributions;
     }),
   );
-  // Add Y axis
+
   var y = d3.scaleLinear().domain([0, maxContributions]).range([height, 0]);
 
   svg.append("g").call(d3.axisLeft(y)).style("font-size", 24);;
 
-  // Bars
   svg
     .selectAll(".bar")
     .data(data)
@@ -200,25 +181,19 @@ async function createTopTenContributorsChart() {
 //end top ten contributors function
 
 async function createStargazersAndForksChart() {
-  // Fetch stargazers and forks data asynchronously
   const response = await responseData.getStargazersAndForks(owner, repo);
 
-  // Remove any existing SVG to start fresh
   d3.select("svg").remove();
 
-  // Set the dimensions and margins of the graph
   var margin = { top: 20, right: 20, bottom: 150, left: 90 },
       width = 500 - margin.left - margin.right,
       height = 400 - margin.top - margin.bottom;
 
-  // Adjusted width and height to fit within the container
   var svgWidth = width + margin.left + margin.right;
   var svgHeight = height + margin.top + margin.bottom;
-  
-  // Select the container for the chart
+
   var svgContainer = d3.select("#chart-0-container");
 
-  // Append a new SVG for the chart
   var svg = svgContainer
     .append("svg")
     .attr("id", "chart-2")
@@ -227,13 +202,11 @@ async function createStargazersAndForksChart() {
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  // Construct data array from the response
   let data = [
     { label: "Stargazers", value: response.stargazers_count },
     { label: "Forks", value: response.forks_count }
   ];
 
-  // X axis
   var x = d3.scaleBand()
     .range([0, width])
     .domain(data.map(d => d.label))
@@ -247,7 +220,6 @@ async function createStargazersAndForksChart() {
     .style("text-anchor", "end")
     .style("font-size", 16);
 
-  // Y axis
   var y = d3.scaleLinear()
     .domain([0, d3.max(data, d => d.value)])
     .nice()
@@ -257,7 +229,6 @@ async function createStargazersAndForksChart() {
     .call(d3.axisLeft(y))
     .style("font-size", 16);
 
-  // Bars
   svg.selectAll(".bar")
     .data(data)
     .enter().append("rect")
@@ -268,7 +239,7 @@ async function createStargazersAndForksChart() {
     .attr("height", d => height - y(d.value))
     .attr("fill", "lightblue");
 
-  // Optional: Add chart title or other annotations
+  // end of stargazers and forks function
 
 }
 
@@ -292,7 +263,6 @@ async function createLengthActiveChart() {
     return { years, months, days: diffDays };
   }
 
-  // Example usage:
   const startDateStr = data.created_at;
   const endDateStr = data.pushed_at;
 
@@ -302,13 +272,12 @@ async function createLengthActiveChart() {
 
   var svg = svgContainer
     .append("svg")
-    .attr("width", 800) // Set a width for the SVG container
-    .attr("height", 200); // Set a height for the SVG container
+    .attr("width", 800) 
+    .attr("height", 200); 
 
-  // Append a group ('g') element to the SVG
   var g = svg.append("g");
 
-  // Append text element to the group ('g')
+ 
   g.append("text")
     .attr("x", 50) // Adjust x position as needed
     .attr("y", 50) // Adjust y position as needed
@@ -322,48 +291,18 @@ async function createLengthActiveChart() {
 async function createSizeChart() {
   const data = await responseData.getSize(owner, repo);
   d3.select("svg").remove();
-  console.log(data);
+
   var svgContainer = d3.select("#chart-0-container");
   var svg = svgContainer
     .append("svg")
-    .attr("width", 600) // Set a width for the SVG container
-    .attr("height", 400); // Set a height for the SVG container
+    .attr("width", 600) 
+    .attr("height", 400); 
 
-
-// Define the dimensions and position of the text box
-var boxWidth = 300;
-var boxHeight = 200;
-var boxX = 50;
-var boxY = 50;
-var borderRadius = 10; // Optional: if you want rounded corners
-
-// Create a rectangle for the background
-var rect = svg.append("rect")
-  .attr("x", boxX)
-  .attr("y", boxY)
-  .attr("width", boxWidth)
-  .attr("height", boxHeight)
-  .attr("rx", borderRadius) // Rounded corners
-  .attr("ry", borderRadius)
-  .style("fill", "lightblue")
-  .style("stroke", "white")
-  .style("stroke-width", 2);
-
-// Add text inside the box
-var text = svg.append("text")
-  .attr("x", boxX + boxWidth / 2)
-  .attr("y", boxY + boxHeight / 2)
-  .style("font-size", "30px")
-  .style("fill", "white")
-  .text(data.toString() + " KB");
-
-
-// Adjust the position of the text relative to the box
-var textBBox = text.node().getBBox();
-var textWidth = textBBox.width;
-var textHeight = textBBox.height;
-
-// Center the text vertically and horizontally
-text.attr("x", boxX + boxWidth / 2 - textWidth / 2)
-    .attr("y", boxY + boxHeight / 2 - textHeight / 2);
+  svg.append("text")
+    .attr("x", 300) 
+    .attr("y", 200) 
+    .style("font-size", "30px")
+    .style("fill", "white")
+    .style("text-anchor", "middle") 
+    .text(data.toString() + " KB");
 }
