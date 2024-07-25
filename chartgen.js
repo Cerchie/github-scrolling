@@ -1,9 +1,8 @@
 async function createLanguageChart(languages) {
-
   d3.select("svg").remove();
 
-  var width = 600; 
-  var height = 600; 
+  var width = 900;
+  var height = 600;
   var margin = 100;
 
   var radius = Math.min(width, height) / 2 - margin;
@@ -13,9 +12,9 @@ async function createLanguageChart(languages) {
     .append("svg")
     .attr("id", "chart-0")
     .attr("width", "100%")
-    .attr("height", "100%") 
-    .attr("preserveAspectRatio", "xMidYMid meet") 
-    .attr("viewBox", `0 0 ${width} ${height}`) 
+    .attr("height", "100%")
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    .attr("viewBox", `0 0 ${width} ${height}`)
     .append("g")
     .attr("transform", `translate(${width / 2},${height / 2})`);
 
@@ -26,10 +25,10 @@ async function createLanguageChart(languages) {
 
   var total = d3.sum(data, (d) => d.count);
 
-  var filteredData = data.filter((d) => (d.count / total) >= 0.05);
+  var filteredData = data.filter((d) => d.count / total >= 0.05);
 
   // Sum up counts of languages that make up less than 5% and group into "Other"
-  var otherCount = d3.sum(data, (d) => (d.count / total) < 0.05 ? d.count : 0);
+  var otherCount = d3.sum(data, (d) => (d.count / total < 0.05 ? d.count : 0));
   if (otherCount > 0) {
     filteredData.push({ language: "Other", count: otherCount });
   }
@@ -37,9 +36,7 @@ async function createLanguageChart(languages) {
   filteredData.sort((a, b) => b.count - a.count);
 
   var customRange = d3.schemeCategory10; // Using a predefined D3 color scheme
-  var color = d3.scaleOrdinal()
-    .domain(filteredData.map((d) => d.language))
-    .range(customRange);
+  var color = d3.scaleOrdinal().domain(filteredData.map((d) => d.language)).range(customRange);
 
   var pie = d3.pie().value((d) => d.count);
 
@@ -47,7 +44,8 @@ async function createLanguageChart(languages) {
 
   var arc = d3.arc().innerRadius(0).outerRadius(radius);
 
-  var arcs = svg.selectAll("pieces")
+  var arcs = svg
+    .selectAll("pieces")
     .data(data_ready)
     .enter()
     .append("path")
@@ -56,54 +54,78 @@ async function createLanguageChart(languages) {
     .attr("stroke", "black")
     .style("stroke-width", "2px");
 
-  var labels = svg.selectAll("labels")
+  var labels = svg
+    .selectAll("labels")
     .data(data_ready)
     .enter()
     .append("text")
-    .text(function(d) {
+    .text(function (d) {
       var percentage = ((d.data.count / total) * 100).toFixed(1);
       return `${d.data.language} (${percentage}%)`;
     })
-    .attr("transform", function(d) {
+    .attr("transform", function (d) {
       var pos = arc.centroid(d);
       var midAngle = Math.atan2(pos[1], pos[0]);
       var x = Math.cos(midAngle) * (radius + 50);
       var y = Math.sin(midAngle) * (radius + 50);
       return `translate(${x},${y})`;
     })
-    .style("text-anchor", function(d) {
+    .style("text-anchor", function (d) {
       var pos = arc.centroid(d);
       return Math.cos(Math.atan2(pos[1], pos[0])) > 0 ? "start" : "end";
     })
-    .style("font-size", 16)
+    .style("font-size", 24)
     .attr("fill", "white");
 
-  function adjustLabelPositions() {
-    var labelNodes = labels.nodes();
-    var labelBoxes = labelNodes.map(function(labelNode) {
-      return labelNode.getBBox();
-    });
-
-    for (var i = 0; i < labelBoxes.length; i++) {
-      for (var j = i + 1; j < labelBoxes.length; j++) {
-        if (isOverlapping(labelBoxes[i], labelBoxes[j])) {
-          var newY = labelBoxes[j].y + labelBoxes[j].height + 100; // Adjust vertical spacing
-          d3.select(labelNodes[j]).attr("transform", `translate(${labelBoxes[j].x},${newY})`);
-          labelBoxes[j].y = newY;
+    function adjustLabelPositions() {
+      var labelNodes = labels.nodes();
+      var labelBoxes = labelNodes.map(function (labelNode) {
+        return labelNode.getBBox();
+      });
+    
+      // Sort label boxes by their y position
+      labelBoxes.sort((a, b) => a.y - b.y);
+    
+      // Loop through labels from top to bottom and adjust positions if needed
+      for (var i = 0; i < labelBoxes.length; i++) {
+        for (var j = i + 1; j < labelBoxes.length; j++) {
+          // Check if labels i and j overlap
+          if (isOverlapping(labelBoxes[i], labelBoxes[j])) {
+            // Calculate the minimum distance to move label j above label i
+            var distanceToMove = labelBoxes[i].y + labelBoxes[i].height - labelBoxes[j].y;
+            
+            // Adjust y position of label j to avoid overlap
+            d3.select(labelNodes[j]).attr("transform", `translate(${labelBoxes[j].x},${labelBoxes[j].y + distanceToMove + 10})`);
+            
+            // Update label box position
+            labelBoxes[j].y += distanceToMove + 10; // Add some padding (10 units) between labels
+          }
         }
+    
+        // Adjust horizontal position based on centroid calculation
+        var label = d3.select(labelNodes[i]);
+        var data = label.datum();
+        var pos = arc.centroid(data);
+        var midAngle = Math.atan2(pos[1], pos[0]);
+        var x = Math.cos(midAngle) * (radius + 50); // Adjust radius or multiplier as needed
+        var y = Math.sin(midAngle) * (radius + 50); // Adjust radius or multiplier as needed
+    
+        // Determine text-anchor based on the position of the label
+        var anchor = Math.cos(midAngle) > 0 ? "start" : "end";
+    
+        // Apply the updated transform with adjusted x and y positions
+        label.attr("transform", `translate(${x},${y})`)
+             .style("text-anchor", anchor);
       }
     }
-  }
+    
 
   function isOverlapping(box1, box2) {
-    return !(box1.x + box1.width < box2.x ||
-             box2.x + box2.width < box1.x ||
-             box1.y + box1.height < box2.y ||
-             box2.y + box2.height < box1.y);
+    return !(box1.x + box1.width < box2.x || box2.x + box2.width < box1.x || box1.y + box1.height < box2.y || box2.y + box2.height < box1.y);
   }
 
   // Call adjustLabelPositions initially and after a delay to allow rendering
-  setTimeout(adjustLabelPositions, 10); 
+  setTimeout(adjustLabelPositions, 10);
 
   // End of language function
 }
