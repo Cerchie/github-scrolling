@@ -89,7 +89,7 @@ async function createLanguageChart(languages) {
       // Loop through labels from top to bottom and adjust positions if needed
       for (var i = 0; i < labelBoxes.length; i++) {
         for (var j = i + 1; j < labelBoxes.length; j++) {
-          // Check if labels i and j overlap
+   
           if (isOverlapping(labelBoxes[i], labelBoxes[j])) {
             // Calculate the minimum distance to move label j above label i
             var distanceToMove = labelBoxes[i].y + labelBoxes[i].height - labelBoxes[j].y;
@@ -271,14 +271,12 @@ async function createLengthActiveChart(data) {
     const startDate = new Date(startDateStr);
     const endDate = new Date(endDateStr);
 
-    const diffMonths = dateFns.differenceInCalendarMonths(endDate, startDate);
     const diffDays = dateFns.differenceInCalendarDays(endDate, startDate);
+    const years = Math.floor(diffDays / 365);
+    const weeks = Math.floor((diffDays % 365) / 7);
+    const days = diffDays % 7;
 
-    // Calculate years and remaining months
-    const years = Math.floor(diffMonths / 12);
-    const months = diffMonths % 12;
-
-    return { years, months, days: diffDays };
+    return { years, weeks, days };
   }
 
   const startDateStr = data.created_at;
@@ -290,21 +288,61 @@ async function createLengthActiveChart(data) {
 
   var svg = svgContainer
     .append("svg")
-    .attr("width", 800) 
-    .attr("height", 200); 
+    .attr("width", 800)
+    .attr("height", 500);
 
-  var g = svg.append("g");
+  var gYears = svg.append("g")
+    .attr("transform", "translate(50, 50)");
 
- 
-  g.append("text")
-    .attr("x", 50) // Adjust x position as needed
-    .attr("y", 50) // Adjust y position as needed
+  var gWeeks = svg.append("g")
+    .attr("transform", "translate(200, 50)");
+
+  var gDays = svg.append("g")
+    .attr("transform", "translate(550, 50)");
+
+
+  var squareMargin = 10;
+  var colors = ["pink", "orange", "blue"];
+
+  // Function to draw squares in each group
+  function drawSquares(g, rowNum, count, color, squareSize) {
+    for (let i = 0; i < count; i++) {
+      var x = (i % rowNum) * (squareSize + squareMargin);
+      var y = Math.floor(i / rowNum) * (squareSize + squareMargin);
+      g.append("rect")
+        .attr("x", x)
+        .attr("y", y)
+        .attr("width", squareSize)
+        .attr("height", squareSize)
+        .attr("fill", color)
+        .attr("stroke", "white")
+        .attr("stroke-width", 2);
+    }
+  }
+
+  // Draw squares for years
+  drawSquares(gYears, 3, duration.years, colors[0], 40);
+
+  // Draw squares for weeks
+  drawSquares(gWeeks, 10, duration.weeks, colors[1], 20);
+
+  // Draw squares for days
+  drawSquares(gDays, 1, duration.days, colors[2], 15);
+
+  // Display the duration text
+  svg.append("text")
+    .attr("x", 50)
+    .attr("y", 180)
     .text(
-        duration.years + " years, " +
-        duration.months + " months, " +
-        duration.days + " days"
-    ).attr("fill", "white").style("font-size", 60); 
+      duration.years + " years, " +
+      duration.weeks + " weeks, " +
+      duration.days + " days"
+    )
+    .attr("fill", "white")
+    .style("font-size", 24);
 }
+
+
 
 async function createSizeChart(data) {
   d3.select("svg").remove();
@@ -313,7 +351,7 @@ async function createSizeChart(data) {
   var svg = svgContainer
     .append("svg")
     .attr("width", 600) 
-    .attr("height", 400); 
+    .attr("height", 800); 
 
   svg.append("text")
     .attr("x", 300) 
