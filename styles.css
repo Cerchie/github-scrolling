@@ -1,38 +1,34 @@
 /* Body styles */
 body {
-    font-family: "Averia Serif Libre", serif;
-    font-weight: 300;
-    font-style: normal;
+  font-family: "Averia Serif Libre", serif;
+  font-weight: 300;
+  font-style: normal;
   padding: 0;
   color: white;
   background-color: black; /* Light background color */
 }
 
 text{
-    font-family: "Averia Serif Libre", serif;
-    font-weight: 300;
-    font-style: normal;
-
+  font-family: "Averia Serif Libre", serif;
+  font-weight: 300;
+  font-style: normal;
 }
 
 svg {
   margin: 1em;
   padding: 1em;
+  width: 100%;
+  height: auto;
 }
 
 /* Heading styles */
-
-h2,
-h3 {
+h2, h3 {
   font-family: "Rubik", sans-serif;
   font-optical-sizing: auto;
   font-weight: 200;
   font-style: normal;
   color: white; /* Dark color for headings */
-
 }
-
-
 
 /* Container styles */
 .container {
@@ -45,10 +41,8 @@ h3 {
 }
 
 .error-message {
-    max-width: 960px;
-
+  max-width: 960px;
   padding: 20px;
-
 }
 
 /* Form styles */
@@ -60,7 +54,6 @@ h3 {
   font-style: normal;
 }
 
-
 label {
   display: block;
   font-weight: light;
@@ -68,25 +61,24 @@ label {
 }
 
 h1{
-    font-family: "Averia Serif Libre", serif;
-    font-weight: 300;
-    font-style: normal;
-    text-align:center;
-    font-style: normal;
-    font-size: 4em;
+  font-family: "Averia Serif Libre", serif;
+  font-weight: 300;
+  font-style: normal;
+  text-align:center;
+  font-style: normal;
+  font-size: 4em;
 }
 
 #end-p {
-    font-family: "Averia Serif Libre", serif;
-    font-weight: 300;
-    font-style: normal;
-    text-align:center;
-    font-style: normal;
-    font-size: 2em;
+  font-family: "Averia Serif Libre", serif;
+  font-weight: 300;
+  font-style: normal;
+  text-align:center;
+  font-style: normal;
+  font-size: 2em;
 }
 
-input[type="text"],
-textarea {
+input[type="text"], textarea {
   width: 100%;
   padding: 10px;
   font-size: 1em;
@@ -130,12 +122,6 @@ div {
   line-height: 1.6em;
 }
 
-/* .holder {
-  display: flex;
-  flex-direction: column; 
-  gap: 20px; 
-} */
-
 .steps {
   margin-left: 0;
   margin-right: 0;
@@ -154,14 +140,12 @@ div {
   opacity: 1; /* Show active step */
 }
 
-
 #chart {
-  width: 50%;
+  width: 100%;
+  height: auto;
   position: sticky;
   top: 0px;
   left: 0px;
-  width: 400px;
-  height: 400px;
 }
 
 #chart-0-container {
@@ -179,35 +163,35 @@ div {
 /* Section styles */
 section {
   display: flex; /* Use flexbox to manage children */
+  flex-direction: row;
   justify-content: space-between; /* Ensure space between divs */
   align-items: flex-start; /* Align items at the top */
 }
-
-
-/* Text content styles */
-p {
-  line-height: 1.6;
-}
-
-/* Link styles */
-a {
-  color: #007bff; /* Link color */
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline; /* Underline on hover */
-}
-
-/* Responsive adjustments */
+/* Responsive Adjustments */
 @media (max-width: 768px) {
-  .container {
-    padding: 15px;
-  }
+    h1 {
+        font-size: 2.5em; /* Adjust for smaller screens */
+    }
+
+    .steps {
+        width: 100%;
+    }
+
+    .step {
+        min-height: auto;
+    }
+
+    section {
+        padding: 20px;
+    }
 }
 
 @media (max-width: 576px) {
-  h1 {
-    font-size: 1.5em;
-  }
+    h1 {
+        font-size: 1.8em;
+    }
+
+    .container {
+        padding: 15px;
+    }
 }
