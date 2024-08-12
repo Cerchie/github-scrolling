@@ -167,31 +167,19 @@ section {
   justify-content: space-between; /* Ensure space between divs */
   align-items: flex-start; /* Align items at the top */
 }
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-    h1 {
-        font-size: 2.5em; /* Adjust for smaller screens */
-    }
+  section {
+      flex-direction: column; /* Stack elements vertically */
+      align-items: center;
+  }
 
-    .steps {
-        width: 100%;
-    }
+  .steps {
+      width: 100%; /* Ensure steps take full width on mobile */
+  }
 
-    .step {
-        min-height: auto;
-    }
-
-    section {
-        padding: 20px;
-    }
-}
-
-@media (max-width: 576px) {
-    h1 {
-        font-size: 1.8em;
-    }
-
-    .container {
-        padding: 15px;
-    }
+  #chart-0-container {
+      margin-bottom: 20px; /* Add some spacing between chart and text */
+  }
 }

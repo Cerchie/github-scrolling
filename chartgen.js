@@ -122,38 +122,39 @@ async function createLanguageChart(languages) {
   forceDirectedLabelPlacement();
 }
 
-
-
-
 async function createTopTenContributorsChart(data) {
-  var margin = { top: 20, right: 20, bottom: 150, left: 90 },
-    width = 500 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
-  d3.select("svg").remove();
+  // Select the container width
   var svgContainer = d3.select("#chart-0-container");
+  var containerWidth = parseInt(svgContainer.style("width"));
 
-  var svgWidth = width + margin.left + margin.right;
-  var svgHeight = height + margin.top + margin.bottom;
-  
+  // Adjust dimensions based on container width
+  var margin = { top: 20, right: 20, bottom: 100, left: 60 },
+    width = containerWidth - margin.left - margin.right,
+    height = (containerWidth * 0.75) - margin.top - margin.bottom; // Keep aspect ratio
+
+  // Clear any existing SVG
+  d3.select("svg").remove();
+
   var svg = svgContainer
     .append("svg")
     .attr("id", "chart-1")
-    .attr("width", svgWidth)
-    .attr("height", svgHeight)
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
+  // Scale the x-axis
   var x = d3
     .scaleBand()
     .range([0, width])
     .domain(
       data.map(function (d) {
         return d.login;
-      }),
+      })
     )
     .padding(0.2);
 
+  // Append x-axis
   svg
     .append("g")
     .attr("transform", "translate(0," + height + ")")
@@ -161,20 +162,19 @@ async function createTopTenContributorsChart(data) {
     .selectAll("text")
     .attr("transform", "translate(-10,0)rotate(-45)")
     .style("text-anchor", "end")
-    .style("font-size", 24);
+    .style("font-size", Math.min(24, width / 25)); // Responsive font size
 
-  let maxContributions = d3.max(
-    data.map(function (d) {
-      return d.contributions;
-    }),
-  );
-
+  // Scale the y-axis
+  let maxContributions = d3.max(data, d => d.contributions);
   var y = d3.scaleLinear().domain([0, maxContributions]).range([height, 0]);
 
-  svg.append("g").call(d3.axisLeft(y)).style("font-size", 24);;
+  // Append y-axis
+  svg.append("g")
+    .call(d3.axisLeft(y))
+    .style("font-size", Math.min(24, width / 25)); // Responsive font size
 
-  svg
-    .selectAll(".bar")
+  // Draw the bars
+  svg.selectAll(".bar")
     .data(data)
     .enter()
     .append("rect")
@@ -197,20 +197,20 @@ async function createStargazersAndForksChart(response) {
 
   d3.select("svg").remove();
 
-  var margin = { top: 20, right: 20, bottom: 150, left: 90 },
-      width = 500 - margin.left - margin.right,
-      height = 400 - margin.top - margin.bottom;
-
-  var svgWidth = width + margin.left + margin.right;
-  var svgHeight = height + margin.top + margin.bottom;
-
+  // Select the container width
   var svgContainer = d3.select("#chart-0-container");
+  var containerWidth = parseInt(svgContainer.style("width"));
+
+  // Adjust dimensions based on container width
+  var margin = { top: 20, right: 20, bottom: 100, left: 60 },
+      width = containerWidth - margin.left - margin.right,
+      height = (containerWidth * 0.75) - margin.top - margin.bottom; // Maintain aspect ratio
 
   var svg = svgContainer
     .append("svg")
     .attr("id", "chart-2")
-    .attr("width", svgWidth)
-    .attr("height", svgHeight)
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -230,7 +230,7 @@ async function createStargazersAndForksChart(response) {
     .selectAll("text")
     .attr("transform", "translate(-10,0)rotate(-45)")
     .style("text-anchor", "end")
-    .style("font-size", 24);
+    .style("font-size", Math.min(24, width / 25)); // Responsive font size
 
   var y = d3.scaleLinear()
     .domain([0, d3.max(data, d => d.value)])
@@ -239,7 +239,7 @@ async function createStargazersAndForksChart(response) {
 
   svg.append("g")
     .call(d3.axisLeft(y))
-    .style("font-size", 16);
+    .style("font-size", Math.min(16, width / 35)); // Responsive font size
 
   svg.selectAll(".bar")
     .data(data)
@@ -254,6 +254,7 @@ async function createStargazersAndForksChart(response) {
   // end of stargazers and forks function
 
 }
+
 
 async function createLengthActiveChart(data) {
   d3.select("svg").remove();
