@@ -237,7 +237,7 @@ async function createStargazersAndForksChart(response) {
     .selectAll("text")
     .attr("transform", "translate(-10,0)rotate(-45)")
     .style("text-anchor", "end")
-    .style("font-size", 16);
+    .style("font-size", 24);
 
   var y = d3.scaleLinear()
     .domain([0, d3.max(data, d => d.value)])
@@ -261,8 +261,6 @@ async function createStargazersAndForksChart(response) {
   // end of stargazers and forks function
 
 }
-
-
 
 async function createLengthActiveChart(data) {
   d3.select("svg").remove();
@@ -291,20 +289,10 @@ async function createLengthActiveChart(data) {
     .attr("width", 800)
     .attr("height", 500);
 
-  var gYears = svg.append("g")
-    .attr("transform", "translate(50, 50)");
-
-  var gWeeks = svg.append("g")
-    .attr("transform", "translate(200, 50)");
-
-  var gDays = svg.append("g")
-    .attr("transform", "translate(550, 50)");
-
-
   var squareMargin = 10;
   var colors = ["pink", "orange", "blue"];
 
-  // Function to draw squares in each group
+  // Function to draw squares in each group and return the total width of the group
   function drawSquares(g, rowNum, count, color, squareSize) {
     for (let i = 0; i < count; i++) {
       var x = (i % rowNum) * (squareSize + squareMargin);
@@ -318,21 +306,41 @@ async function createLengthActiveChart(data) {
         .attr("stroke", "white")
         .attr("stroke-width", 2);
     }
+    const totalWidth = (rowNum * (squareSize + squareMargin)) - squareMargin;
+    return totalWidth;
   }
 
-  // Draw squares for years
-  drawSquares(gYears, 3, duration.years, colors[0], 40);
+  // Calculate the width of each group of squares
+  const yearsWidth = drawSquares(svg.append("g"), 3, duration.years, colors[0], 40);
+  const weeksWidth = drawSquares(svg.append("g"), 10, duration.weeks, colors[1], 20);
+  const daysWidth = drawSquares(svg.append("g"), 1, duration.days, colors[2], 15);
 
-  // Draw squares for weeks
-  drawSquares(gWeeks, 10, duration.weeks, colors[1], 20);
+  // Calculate total width for all groups combined
+  const totalWidth = yearsWidth + weeksWidth + daysWidth + 4 * squareMargin;
 
-  // Draw squares for days
-  drawSquares(gDays, 1, duration.days, colors[2], 15);
+  // Calculate starting positions to ensure equal spacing
+  const startX = (800 - totalWidth) / 2;
+  const weeksX = startX + yearsWidth + squareMargin * 2;
+  const daysX = weeksX + weeksWidth + squareMargin * 2;
 
-  // Display the duration text
+  // Append and transform each group
+  svg.select("g:nth-child(1)").attr("transform", `translate(${startX}, 50)`);
+  svg.select("g:nth-child(2)").attr("transform", `translate(${weeksX}, 50)`);
+  svg.select("g:nth-child(3)").attr("transform", `translate(${daysX}, 50)`);
+
+  // Calculate maxHeight manually since it was missing from the code
+  const maxHeight = 50 + Math.max(
+    Math.ceil(duration.years / 3) * (40 + squareMargin),
+    Math.ceil(duration.weeks / 10) * (20 + squareMargin),
+    Math.ceil(duration.days / 1) * (15 + squareMargin)
+  );
+
+  // Display the duration text below the squares
+  console.log(duration.years); // Ensure this logs correctly
+
   svg.append("text")
     .attr("x", 50)
-    .attr("y", 180)
+    .attr("y", maxHeight + 40)  // Adjust y position based on the max height of squares
     .text(
       duration.years + " years, " +
       duration.weeks + " weeks, " +
@@ -340,24 +348,4 @@ async function createLengthActiveChart(data) {
     )
     .attr("fill", "white")
     .style("font-size", 24);
-}
-
-
-
-async function createSizeChart(data) {
-  d3.select("svg").remove();
-
-  var svgContainer = d3.select("#chart-0-container");
-  var svg = svgContainer
-    .append("svg")
-    .attr("width", 600) 
-    .attr("height", 800); 
-
-  svg.append("text")
-    .attr("x", 300) 
-    .attr("y", 200) 
-    .style("font-size", "30px")
-    .style("fill", "white")
-    .style("text-anchor", "middle") 
-    .text(data.toString() + " KB");
 }

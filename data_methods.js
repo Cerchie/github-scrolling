@@ -136,33 +136,6 @@ class ResponseData {
       console.error("Error fetching data:", error.message);
     }
   }
-  async getSize(owner, repo) {
-    try {
-      //https://stackoverflow.com/questions/8646517/how-can-i-see-the-size-of-a-github-repository-before-cloning-it
-      const response = await fetch(
-        `https://api.github.com/repos/${owner}/${repo}`,
-      );
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error(`Repository '${owner}/${repo}' not found.`);
-        } else if (response.status === 403) {
-          throw new Error(`Access to repository '${owner}/${repo}' forbidden.`);
-        } else {
-          throw new Error(
-            `Failed to fetch data from GitHub API: ${response.status} ${response.statusText}`,
-          );
-        }
-      }
-
-      const fullData = await response.json();
-      const size = fullData.size;
-      return size;
-    } catch (error) {
-      // Handle errors and display appropriate message to the user
-      console.error("Error fetching data:", error.message);
-    }
-  }
 }
 
 function displayErrorMessage(message) {

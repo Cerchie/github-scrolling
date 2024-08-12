@@ -19,14 +19,13 @@ f.addEventListener("submit", async (event) => {
   console.log(chosenOwner, chosenRepo);
 
   try {
-    const [languages, topTenContributors, stargazersAndForks, size, lengthActive] = await Promise.all([
+    const [languages, topTenContributors, stargazersAndForks,lengthActive] = await Promise.all([
       responseData.getLanguages(owner, repo),
       responseData.getTopTenContributors(owner, repo),
       responseData.getStargazersAndForks(owner, repo),
-      responseData.getSize(owner, repo),
       responseData.getLengthActive(owner, repo)
     ]);
-    console.log([languages, topTenContributors, stargazersAndForks, size, lengthActive])
+    console.log([languages, topTenContributors, stargazersAndForks, lengthActive])
 
 const scroller = scrollama();
 
@@ -35,7 +34,6 @@ const callbacksWithData = [
   { callback: createTopTenContributorsChart, data: topTenContributors },
   { callback: createStargazersAndForksChart, data: stargazersAndForks },
   { callback: createLengthActiveChart, data: lengthActive },
-  { callback: createSizeChart, data: size }
 ];
 
 const steps = d3.selectAll(".step");
