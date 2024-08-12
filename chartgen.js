@@ -77,58 +77,51 @@ async function createLanguageChart(languages) {
     .style("font-size", 24)
     .attr("fill", "white");
 
-    function adjustLabelPositions() {
-      var labelNodes = labels.nodes();
-      var labelBoxes = labelNodes.map(function (labelNode) {
-        return labelNode.getBBox();
-      });
-    
-      // Sort label boxes by their y position
-      labelBoxes.sort((a, b) => a.y - b.y);
-    
-      // Loop through labels from top to bottom and adjust positions if needed
-      for (var i = 0; i < labelBoxes.length; i++) {
-        for (var j = i + 1; j < labelBoxes.length; j++) {
-   
-          if (isOverlapping(labelBoxes[i], labelBoxes[j])) {
-            // Calculate the minimum distance to move label j above label i
-            var distanceToMove = labelBoxes[i].y + labelBoxes[i].height - labelBoxes[j].y;
-            
-            // Adjust y position of label j to avoid overlap
-            d3.select(labelNodes[j]).attr("transform", `translate(${labelBoxes[j].x},${labelBoxes[j].y + distanceToMove + 10})`);
-            
-            // Update label box position
-            labelBoxes[j].y += distanceToMove + 10; // Add some padding (10 units) between labels
+  // Apply force-directed placement to labels to avoid overlap
+  function forceDirectedLabelPlacement() {
+    var nodes = labels.nodes().map((label, i) => {
+      var bbox = label.getBBox();
+      return {
+        node: label,
+        x: parseFloat(label.getAttribute('transform').split('(')[1].split(')')[0].split(',')[0]),
+        y: parseFloat(label.getAttribute('transform').split('(')[1].split(')')[0].split(',')[1]),
+        width: bbox.width,
+        height: bbox.height,
+        originalX: parseFloat(label.getAttribute('transform').split('(')[1].split(')')[0].split(',')[0]),
+        originalY: parseFloat(label.getAttribute('transform').split('(')[1].split(')')[0].split(',')[1])
+      };
+    });
+
+    // Simple force simulation
+    for (var i = 0; i < 500; i++) { // Iterate more for better results
+      for (var a = 0; a < nodes.length; a++) {
+        for (var b = a + 1; b < nodes.length; b++) {
+          var dx = nodes[b].x - nodes[a].x;
+          var dy = nodes[b].y - nodes[a].y;
+          var distance = Math.sqrt(dx * dx + dy * dy);
+          var minDist = (nodes[a].width + nodes[b].width) / 2;
+
+          if (distance < minDist) {
+            var moveX = (dx / distance) * (minDist - distance);
+            var moveY = (dy / distance) * (minDist - distance);
+            nodes[a].x -= moveX / 2;
+            nodes[a].y -= moveY / 2;
+            nodes[b].x += moveX / 2;
+            nodes[b].y += moveY / 2;
           }
         }
-    
-        // Adjust horizontal position based on centroid calculation
-        var label = d3.select(labelNodes[i]);
-        var data = label.datum();
-        var pos = arc.centroid(data);
-        var midAngle = Math.atan2(pos[1], pos[0]);
-        var x = Math.cos(midAngle) * (radius + 50); // Adjust radius or multiplier as needed
-        var y = Math.sin(midAngle) * (radius + 50); // Adjust radius or multiplier as needed
-    
-        // Determine text-anchor based on the position of the label
-        var anchor = Math.cos(midAngle) > 0 ? "start" : "end";
-    
-        // Apply the updated transform with adjusted x and y positions
-        label.attr("transform", `translate(${x},${y})`)
-             .style("text-anchor", anchor);
       }
     }
-    
 
-  function isOverlapping(box1, box2) {
-    return !(box1.x + box1.width < box2.x || box2.x + box2.width < box1.x || box1.y + box1.height < box2.y || box2.y + box2.height < box1.y);
+    nodes.forEach(function(d) {
+      d3.select(d.node)
+        .attr("transform", `translate(${d.x},${d.y})`);
+    });
   }
 
-  // Call adjustLabelPositions initially and after a delay to allow rendering
-  setTimeout(adjustLabelPositions, 10);
-
-  // End of language function
+  forceDirectedLabelPlacement();
 }
+
 
 
 
@@ -335,7 +328,7 @@ async function createLengthActiveChart(data) {
     Math.ceil(duration.days / 1) * (15 + squareMargin)
   );
 
-  // Display the duration text below the squares
+
   console.log(duration.years); // Ensure this logs correctly
 
   svg.append("text")
