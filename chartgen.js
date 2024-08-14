@@ -128,7 +128,7 @@ async function createTopTenContributorsChart(data) {
   var containerWidth = parseInt(svgContainer.style("width"));
 
   // Adjust dimensions based on container width
-  var margin = { top: 20, right: 20, bottom: 100, left: 60 },
+  var margin = { top: 40, right: 80, bottom: 200, left: 80 },
     width = containerWidth - margin.left - margin.right,
     height = (containerWidth * 0.75) - margin.top - margin.bottom; // Keep aspect ratio
 
