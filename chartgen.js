@@ -128,9 +128,9 @@ async function createTopTenContributorsChart(data) {
   var containerWidth = parseInt(svgContainer.style("width"));
 
   // Adjust dimensions based on container width
-  var margin = { top: 40, right: 80, bottom: 200, left: 80 },
+  var margin = { top: 40, right: 80, bottom: containerWidth < 500 ? 120 : 200, left: 80 },
     width = containerWidth - margin.left - margin.right,
-    height = (containerWidth * 0.75) - margin.top - margin.bottom; // Keep aspect ratio
+    height = (containerWidth * 0.6) - margin.top - margin.bottom; // Keep aspect ratio slightly smaller for better mobile fit
 
   // Clear any existing SVG
   d3.select("svg").remove();
@@ -162,7 +162,7 @@ async function createTopTenContributorsChart(data) {
     .selectAll("text")
     .attr("transform", "translate(-10,0)rotate(-45)")
     .style("text-anchor", "end")
-    .style("font-size", Math.min(24, width / 25)); // Responsive font size
+    .style("font-size", Math.min(20, width / 25)); // Responsive font size
 
   // Scale the y-axis
   let maxContributions = d3.max(data, d => d.contributions);
@@ -171,7 +171,7 @@ async function createTopTenContributorsChart(data) {
   // Append y-axis
   svg.append("g")
     .call(d3.axisLeft(y))
-    .style("font-size", Math.min(24, width / 25)); // Responsive font size
+    .style("font-size", Math.min(20, width / 25)); // Responsive font size
 
   // Draw the bars
   svg.selectAll(".bar")
@@ -189,6 +189,13 @@ async function createTopTenContributorsChart(data) {
       return height - y(d.contributions);
     })
     .attr("fill", "palegreen");
+
+  // Make the SVG responsive by scaling to parent container
+  d3.select("#chart-1")
+    .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    .style("width", "100%")
+    .style("height", "auto");
 }
 
 //end top ten contributors function
