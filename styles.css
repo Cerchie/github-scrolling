@@ -172,6 +172,9 @@ section {
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
+  h1 {
+    font-size: 2em;
+  }
   section {
       flex-direction: column; /* Stack elements vertically */
       align-items: center;
