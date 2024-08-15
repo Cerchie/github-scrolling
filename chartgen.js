@@ -255,7 +255,6 @@ async function createStargazersAndForksChart(response) {
 
 }
 
-
 async function createLengthActiveChart(data) {
   d3.select("svg").remove();
 
@@ -280,8 +279,10 @@ async function createLengthActiveChart(data) {
 
   var svg = svgContainer
     .append("svg")
-    .attr("width", 800)
-    .attr("height", 500);
+    .attr("viewBox", `0 0 800 500`) // Set viewBox for responsive scaling
+    .attr("preserveAspectRatio", "xMidYMid meet") // Preserve aspect ratio
+    .style("width", "100%") // Make the width 100% of the parent container
+    .style("height", "auto"); // Auto height based on width
 
   var squareMargin = 10;
   var colors = ["pink", "orange", "blue"];
@@ -328,9 +329,6 @@ async function createLengthActiveChart(data) {
     Math.ceil(duration.weeks / 10) * (20 + squareMargin),
     Math.ceil(duration.days / 1) * (15 + squareMargin)
   );
-
-
-  console.log(duration.years); // Ensure this logs correctly
 
   svg.append("text")
     .attr("x", 50)
