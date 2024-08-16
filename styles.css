@@ -186,11 +186,12 @@ section {
 
 
   .step {
-    opacity: 1; /* Initially hide all steps */
+    opacity: 0; /* Initially hide all steps */
+    transition: opacity .5s ease; /* Smooth transition for opacity changes */
     position: sticky;
     background-color: black;
-    margin-bottom: 50%;
-    margin-top: 50%;
+    margin-bottom: 70%;
+    margin-top: 70%;
     box-shadow: 20px 20px 60px 60px black;
     min-height: 20%;
     padding: 0;
@@ -199,9 +200,9 @@ section {
     opacity: 1; /* Initially hide all steps */
     position: relative;
     background-color: black;
-    margin-bottom: 50%;
-    margin-top: 50%;
-    box-shadow: 20px 20px 60px 60px black;
+    margin-bottom: 70%;
+    margin-top: 70%;
+    /* box-shadow: 20px 20px 60px 60px black; */
     min-height: 20%;
     padding: 0;
   }

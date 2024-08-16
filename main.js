@@ -86,17 +86,8 @@ f.addEventListener("submit", async (event) => {
   }
 });
 
-// Function to clear all charts by removing SVG elements or clearing containers
+
 function clearAllCharts() {
-  // Assuming each chart is rendered inside a specific container with an SVG element.
-  // Example: Clearing all SVG elements
   d3.selectAll("svg").remove();
-
-  // Or, if each chart has its own container, you could clear each one:
-  // d3.select("#chart-container-1").html(""); 
-  // d3.select("#chart-container-2").html(""); 
-  // etc.
-
-  // Additionally, remove any active classes from steps, if needed
   d3.selectAll(".step").classed("active", false);
 }
