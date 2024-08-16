@@ -191,9 +191,9 @@ section {
     background-color: black;
     margin-bottom: 50%;
     margin-top: 50%;
-    box-shadow: 20px 20px 20px 40px black;
+    box-shadow: 20px 20px 60px 60px black;
     min-height: 20%;
-    padding-bottom: 2em;
+    padding: 0;
   }
   .step.active {
     opacity: 1; /* Initially hide all steps */
@@ -201,9 +201,9 @@ section {
     background-color: black;
     margin-bottom: 50%;
     margin-top: 50%;
-    box-shadow: 20px 20px 20px 40px black;
+    box-shadow: 20px 20px 60px 60px black;
     min-height: 20%;
-    padding-bottom: 2em;
+    padding: 0;
   }
 
   #chart-0-container {
