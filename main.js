@@ -1,6 +1,3 @@
-const width = 400;
-const height = 400;
-
 let owner = "";
 let repo = "";
 
@@ -10,75 +7,79 @@ const f = document.getElementById("repo_owner_form");
 
 f.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const errorMessage = document.getElementsByClassName("error-message");
-  errorMessage[0].innerHTML = "";
-  const chosenOwner = document.getElementById("owner").value;
-  owner = chosenOwner;
-  const chosenRepo = document.getElementById("repo").value;
-  repo = chosenRepo;
-  console.log(chosenOwner, chosenRepo);
-
+  
   try {
-    const [languages, topTenContributors, stargazersAndForks,lengthActive] = await Promise.all([
+    const errorMessage = document.getElementsByClassName("error-message");
+    if (errorMessage.length > 0) {
+      errorMessage[0].innerHTML = "";
+    }
+
+    const chosenOwner = document.getElementById("owner").value;
+    const chosenRepo = document.getElementById("repo").value;
+
+    if (!chosenOwner || !chosenRepo) {
+      throw new Error("Owner and repository fields must not be empty.");
+    }
+
+    owner = chosenOwner;
+    repo = chosenRepo;
+    
+    console.log("Chosen Owner:", chosenOwner);
+    console.log("Chosen Repo:", chosenRepo);
+
+    const [languages, topTenContributors, stargazersAndForks, lengthActive] = await Promise.all([
       responseData.getLanguages(owner, repo),
       responseData.getTopTenContributors(owner, repo),
       responseData.getStargazersAndForks(owner, repo),
       responseData.getLengthActive(owner, repo)
     ]);
-    console.log([languages, topTenContributors, stargazersAndForks, lengthActive])
+    
+    console.log("Fetched Data:", { languages, topTenContributors, stargazersAndForks, lengthActive });
 
-const scroller = scrollama();
+    const scroller = scrollama();
 
-const callbacksWithData = [
-  { callback: createLanguageChart, data: languages },
-  { callback: createTopTenContributorsChart, data: topTenContributors },
-  { callback: createStargazersAndForksChart, data: stargazersAndForks },
-  { callback: createLengthActiveChart, data: lengthActive },
-];
+    const callbacksWithData = [
+      { callback: createLanguageChart, data: languages },
+      { callback: createTopTenContributorsChart, data: topTenContributors },
+      { callback: createStargazersAndForksChart, data: stargazersAndForks },
+      { callback: createLengthActiveChart, data: lengthActive },
+    ];
 
-const steps = d3.selectAll(".step");
+    const steps = d3.selectAll(".step");
 
-// Setup the instance, pass callback functions
-scroller
-  .setup({
-    step: ".step",
-  })
-  .onStepEnter(handleStepEnter) // Define the onStepEnter callback
-  .onStepExit(handleStepExit); // Define the onStepExit callback
+    scroller
+      .setup({ step: ".step" })
+      .onStepEnter(handleStepEnter)
+      .onStepExit(handleStepExit);
 
-let currentStepIndex = -1; // Variable to keep track of the current step index
+    let currentStepIndex = -1;
 
-// Callback function for onStepEnter
-function handleStepEnter(response) {
+    function handleStepEnter(response) {
+      const index = response.index;
+      const { callback, data } = callbacksWithData[index];
 
-  const index = response.index;
+      if (callback && data) {
+        callback(data); 
+        d3.select(steps.nodes()[index]).classed("active", true); 
+        console.log("Step Enter:", response);
+      } else {
+        console.log("Error: Invalid index or missing callback or data.");
+      }
 
-  const { callback, data } = callbacksWithData[index];
+      currentStepIndex = index;
+    }
 
-  if (callback && data) {
-    callback(data); 
-    d3.select(steps.nodes()[index]).classed("active", true); 
-    console.log("enter", response);
-  } else {
-    console.log("Error: Invalid index or missing callback or data.");
-  }
-
-  currentStepIndex = index;
-
-  console.log("enter", response);
-}
-
-// Callback function for onStepExit
-function handleStepExit(response) {
-  const index = response.index;
-
-  // Remove 'active' class from the current step to fade it out
-  d3.select(steps.nodes()[index]).classed("active", false);
-
-  console.log("exit", response);
-}
+    function handleStepExit(response) {
+      const index = response.index;
+      d3.select(steps.nodes()[index]).classed("active", false);
+      console.log("Step Exit:", response);
+    }
 
   } catch (error) {
-    console.error('Failed to fetch data from GitHub API:', error);
+    console.error('Failed to process form submission:', error);
+    const errorMessage = document.getElementsByClassName("error-message");
+    if (errorMessage.length > 0) {
+      errorMessage[0].innerHTML = `Error: ${error.message}`;
+    }
   }
-  });
+});

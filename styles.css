@@ -192,6 +192,7 @@ section {
     margin-top: 8em;
     box-shadow: 20px 20px 20px 40px black;
     min-height: 20%;
+    padding-bottom: 2em;
   }
   .step.active {
     opacity: 1; /* Show active step */
