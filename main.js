@@ -57,13 +57,15 @@ f.addEventListener("submit", async (event) => {
     let currentStepIndex = -1;
 
     function handleStepEnter(response) {
+      console.log(`Entering step ${response.index} with function: ${callbacksWithData[response.index].callback.name}`);
       const index = response.index;
       const { callback, data } = callbacksWithData[index];
 
       if (callback && data) {
-        callback(data); 
-        d3.select(steps.nodes()[index]).classed("active", true); 
-        console.log("Step Enter:", response);
+        setTimeout(() => {
+          callback(data);
+          d3.select(steps.nodes()[index]).classed("active", true);
+        }, 50); // Delay to ensure proper rendering
       } else {
         console.log("Error: Invalid index or missing callback or data.");
       }

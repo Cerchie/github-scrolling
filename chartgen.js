@@ -209,11 +209,13 @@ async function createTopTenContributorsChart(data) {
 
 async function createStargazersAndForksChart(response) {
 
-  d3.select("svg").remove();
 
   // Select the container width
   var svgContainer = d3.select("#chart-0-container");
   var containerWidth = parseInt(svgContainer.style("width"));
+
+
+document.body.offsetHeight; // Force a reflow
 
   var margin = {
     top: containerWidth < 500 ? 30 : 40,
@@ -232,6 +234,8 @@ async function createStargazersAndForksChart(response) {
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+
+    d3.select("svg").remove();
   let data = [
     { label: "Stargazers", value: response.stargazers_count },
     { label: "Forks", value: response.forks_count }
@@ -275,7 +279,7 @@ async function createStargazersAndForksChart(response) {
 
 async function createLengthActiveChart(data) {
 
-  var svgContainer = d3.select("#chart-0-container");
+    var svgContainer = d3.select("#chart-0-container");
   var containerWidth = parseInt(svgContainer.style("width"));
 
   var margin = {
@@ -286,7 +290,6 @@ async function createLengthActiveChart(data) {
   },
   width = containerWidth - margin.left - margin.right,
   height = containerWidth < 500 ? containerWidth * 0.8 - margin.top - margin.bottom : containerWidth * 0.6 - margin.top - margin.bottom; // Give more vertical space on mobile
-
 
   d3.select("svg").remove();
 

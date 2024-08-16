@@ -188,26 +188,29 @@ section {
   .step {
     opacity: 0; /* Initially hide all steps */
     transition: opacity .5s ease; /* Smooth transition for opacity changes */
-    position: sticky;
+    position: relative;
     background-color: black;
-    margin-bottom: 70%;
-    margin-top: 70%;
+    margin-top: 50vh; /* Ensure there's enough space for the step to fully enter the viewport */
+    margin-bottom: 50vh;
     box-shadow: 20px 20px 60px 60px black;
     min-height: 20%;
     padding: 0;
+    z-index: 1; /* Ensure the step elements are properly layered */
   }
   .step.active {
     opacity: 1; /* Initially hide all steps */
     position: relative;
     background-color: black;
-    margin-bottom: 70%;
-    margin-top: 70%;
+    margin-top: 50vh; /* Ensure there's enough space for the step to fully enter the viewport */
+    margin-bottom: 50vh;
     /* box-shadow: 20px 20px 60px 60px black; */
     min-height: 20%;
     padding: 0;
+    z-index: 1; /* Ensure the step elements are properly layered */
   }
 
   #chart-0-container {
-      margin-bottom: 20px; /* Add some spacing between chart and text */
+    margin-top: 20px;
+    margin-bottom: 20px; /* Add some spacing between chart and text */
   }
 }

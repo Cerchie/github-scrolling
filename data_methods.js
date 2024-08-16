@@ -135,8 +135,7 @@ class ResponseData {
       // Handle errors and display appropriate message to the user
       console.error("Error fetching data:", error.message);
     }
-  }
-}
+  }}
 
 function displayErrorMessage(message) {
   const errorElement = document.querySelector(".error-message");
