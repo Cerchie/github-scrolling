@@ -184,21 +184,26 @@ section {
       width: 100%; /* Ensure steps take full width on mobile */
   }
 
+
   .step {
     opacity: 1; /* Initially hide all steps */
-    position: relative;
+    position: sticky;
     background-color: black;
-    margin-bottom: 8em;
-    margin-top: 8em;
+    margin-bottom: 50%;
+    margin-top: 50%;
     box-shadow: 20px 20px 20px 40px black;
     min-height: 20%;
     padding-bottom: 2em;
   }
   .step.active {
-    opacity: 1; /* Show active step */
+    opacity: 1; /* Initially hide all steps */
     position: relative;
+    background-color: black;
+    margin-bottom: 50%;
+    margin-top: 50%;
     box-shadow: 20px 20px 20px 40px black;
     min-height: 20%;
+    padding-bottom: 2em;
   }
 
   #chart-0-container {

@@ -215,10 +215,14 @@ async function createStargazersAndForksChart(response) {
   var svgContainer = d3.select("#chart-0-container");
   var containerWidth = parseInt(svgContainer.style("width"));
 
-  // Adjust dimensions based on container width
-  var margin = { top: 20, right: 20, bottom: 100, left: 60 },
-      width = containerWidth - margin.left - margin.right,
-      height = (containerWidth * 0.75) - margin.top - margin.bottom; // Maintain aspect ratio
+  var margin = {
+    top: containerWidth < 500 ? 30 : 40,
+    right: containerWidth < 500 ? 40 : 80,
+    bottom: containerWidth < 500 ? 80 : 200,
+    left: containerWidth < 500 ? 40 : 80
+  },
+  width = containerWidth - margin.left - margin.right,
+  height = containerWidth < 500 ? containerWidth * 0.8 - margin.top - margin.bottom : containerWidth * 0.6 - margin.top - margin.bottom; // Give more vertical space on mobile
 
   var svg = svgContainer
     .append("svg")
@@ -270,6 +274,20 @@ async function createStargazersAndForksChart(response) {
 }
 
 async function createLengthActiveChart(data) {
+
+  var svgContainer = d3.select("#chart-0-container");
+  var containerWidth = parseInt(svgContainer.style("width"));
+
+  var margin = {
+    top: containerWidth < 500 ? 30 : 40,
+    right: containerWidth < 500 ? 40 : 80,
+    bottom: containerWidth < 500 ? 80 : 200,
+    left: containerWidth < 500 ? 40 : 80
+  },
+  width = containerWidth - margin.left - margin.right,
+  height = containerWidth < 500 ? containerWidth * 0.8 - margin.top - margin.bottom : containerWidth * 0.6 - margin.top - margin.bottom; // Give more vertical space on mobile
+
+
   d3.select("svg").remove();
 
   function calculateDuration(startDateStr, endDateStr) {
@@ -295,8 +313,8 @@ async function createLengthActiveChart(data) {
     .append("svg")
     .attr("viewBox", `0 0 800 500`) // Set viewBox for responsive scaling
     .attr("preserveAspectRatio", "xMidYMid meet") // Preserve aspect ratio
-    .style("width", "100%") // Make the width 100% of the parent container
-    .style("height", "auto"); // Auto height based on width
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
 
   var squareMargin = 10;
   var colors = ["pink", "orange", "blue"];

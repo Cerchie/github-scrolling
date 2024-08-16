@@ -4,11 +4,13 @@ let repo = "";
 const responseData = new ResponseData();
 
 const f = document.getElementById("repo_owner_form");
-
 f.addEventListener("submit", async (event) => {
   event.preventDefault();
   
   try {
+    // Clear all existing charts before processing the new submission
+    clearAllCharts();
+
     const errorMessage = document.getElementsByClassName("error-message");
     if (errorMessage.length > 0) {
       errorMessage[0].innerHTML = "";
@@ -83,3 +85,18 @@ f.addEventListener("submit", async (event) => {
     }
   }
 });
+
+// Function to clear all charts by removing SVG elements or clearing containers
+function clearAllCharts() {
+  // Assuming each chart is rendered inside a specific container with an SVG element.
+  // Example: Clearing all SVG elements
+  d3.selectAll("svg").remove();
+
+  // Or, if each chart has its own container, you could clear each one:
+  // d3.select("#chart-container-1").html(""); 
+  // d3.select("#chart-container-2").html(""); 
+  // etc.
+
+  // Additionally, remove any active classes from steps, if needed
+  d3.selectAll(".step").classed("active", false);
+}
