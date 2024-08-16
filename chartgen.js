@@ -1,9 +1,9 @@
 async function createLanguageChart(languages) {
   d3.select("svg").remove();
 
-  var width = 900;
-  var height = 600;
-  var margin = 100;
+  var width = 1000; // Increased width for better visibility on mobile
+  var height = 700; // Increased height proportionally
+  var margin = 120; // Slightly increased margin for better spacing on mobile
 
   var radius = Math.min(width, height) / 2 - margin;
 
@@ -66,15 +66,15 @@ async function createLanguageChart(languages) {
     .attr("transform", function (d) {
       var pos = arc.centroid(d);
       var midAngle = Math.atan2(pos[1], pos[0]);
-      var x = Math.cos(midAngle) * (radius + 50);
-      var y = Math.sin(midAngle) * (radius + 50);
+      var x = Math.cos(midAngle) * (radius + 60); // Increased label offset
+      var y = Math.sin(midAngle) * (radius + 60); // Increased label offset
       return `translate(${x},${y})`;
     })
     .style("text-anchor", function (d) {
       var pos = arc.centroid(d);
       return Math.cos(Math.atan2(pos[1], pos[0])) > 0 ? "start" : "end";
     })
-    .style("font-size", 24)
+    .style("font-size", 28) // Increased font size
     .attr("fill", "white");
 
   // Apply force-directed placement to labels to avoid overlap
@@ -121,6 +121,7 @@ async function createLanguageChart(languages) {
 
   forceDirectedLabelPlacement();
 }
+
 
 async function createTopTenContributorsChart(data) {
   // Select the container width

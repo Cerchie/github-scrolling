@@ -184,6 +184,22 @@ section {
       width: 100%; /* Ensure steps take full width on mobile */
   }
 
+  .step {
+    opacity: 1; /* Initially hide all steps */
+    position: relative;
+    background-color: black;
+    margin-bottom: 8em;
+    margin-top: 8em;
+    box-shadow: 20px 20px 20px 40px black;
+    min-height: 20%;
+  }
+  .step.active {
+    opacity: 1; /* Show active step */
+    position: relative;
+    box-shadow: 20px 20px 20px 40px black;
+    min-height: 20%;
+  }
+
   #chart-0-container {
       margin-bottom: 20px; /* Add some spacing between chart and text */
   }
