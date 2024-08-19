@@ -1,23 +1,27 @@
 document.getElementById("copyButton").addEventListener("click", function() {
-    // Get the generated SVG element by its ID
     const svgElement = document.querySelector("#chart-0-container svg");
   
     if (svgElement) {
-      // Serialize the SVG to a string
       const svgString = new XMLSerializer().serializeToString(svgElement);
-      
-      // Encode the SVG string as a data URI
-      const svgDataUri = 'data:image/svg+xml;base64,' + btoa(svgString);
-      
-      // Generate the Markdown embed code
-      const embedCode = `![Chart]( ${svgDataUri} )`;
+      const blob = new Blob([svgString], { type: "image/svg+xml" });
+      const url = URL.createObjectURL(blob);
+  
+      // Generate HTML embed code
+      const embedCode = `<img src="${url}" alt="Chart" />`;
   
       // Copy the embed code to the clipboard
       navigator.clipboard.writeText(embedCode).then(() => {
-        alert("Embed code copied to clipboard!");
+        alert("Embed code copied to clipboard! You can download the SVG and use the copied HTML in your README.");
       }).catch(err => {
         console.error('Failed to copy text: ', err);
       });
+  
+      // Offer a download link for the SVG
+      const downloadLink = document.createElement("a");
+      downloadLink.href = url;
+      downloadLink.download = "chart.svg";
+      downloadLink.textContent = "Download SVG";
+      document.body.appendChild(downloadLink);
     } else {
       alert("No SVG found to copy!");
     }
