@@ -1,5 +1,5 @@
 document.getElementById("copyButton").addEventListener("click", async function() {
-    const svgElement = document.querySelector("#chart-0-container");
+    const svgElement = document.querySelector("#chart-0-container svg");
   
     if (svgElement) {
       const svgString = new XMLSerializer().serializeToString(svgElement);
