@@ -34,24 +34,13 @@ global.ResponseData = function() {
   return responseData;
 };
 
-const scrollama = jest.fn().mockReturnValue({
-  setup: jest.fn().mockReturnThis(),
-  onStepEnter: jest.fn().mockReturnThis(),
-  onStepExit: jest.fn().mockReturnThis(),
-});
 
-// Import the functions and variables from the code to be tested
-let owner = "";
-let repo = "";
 let createLanguageChart = jest.fn();
 let createTopTenContributorsChart = jest.fn();
 let createStargazersAndForksChart = jest.fn();
 let createLengthActiveChart = jest.fn();
 
-const {
-  clearAllCharts,
-  f,
-} = require('./path-to-your-js-file'); // Replace with the correct path
+import clearAllCharts from './main.js';
 
 describe('repo_owner_form', () => {
   beforeEach(() => {
