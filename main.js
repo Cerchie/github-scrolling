@@ -1,7 +1,7 @@
 let owner = "";
 let repo = "";
 
-const responseData = new ResponseData();
+import responseData from "./data_methods.js";
 
 const f = document.getElementById("repo_owner_form");
 f.addEventListener("submit", async (event) => {
