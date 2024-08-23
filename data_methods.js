@@ -12,8 +12,10 @@ class ResponseData {
 
       if (!response.ok) {
         if (response.status === 404) {
+
           throw new Error(`Repository '${owner}/${repo}' not found.`);
         } else if (response.status === 403) {
+
           throw new Error(`Access to repository '${owner}/${repo}' forbidden.`);
         } else {
           throw new Error(
@@ -24,7 +26,6 @@ class ResponseData {
     } catch (error) {
       // Handle errors and display appropriate message to the user
       console.error("Error fetching data:", error.message);
-      displayErrorMessage(error.message);
     }
   }
 
@@ -117,6 +118,7 @@ class ResponseData {
 
       if (!response.ok) {
         if (response.status === 404) {
+          
           throw new Error(`Repository '${owner}/${repo}' not found.`);
         } else if (response.status === 403) {
           throw new Error(`Access to repository '${owner}/${repo}' forbidden.`);
@@ -139,6 +141,9 @@ class ResponseData {
 
 function displayErrorMessage(message) {
   const errorElement = document.querySelector(".error-message");
-  errorElement.textContent = message;
+  console.log("Error Element:", errorElement);
+  errorElement.innerHTML = message;
   errorElement.style.color = "red";
 }
+
+

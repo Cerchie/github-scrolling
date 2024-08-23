@@ -35,6 +35,10 @@ f.addEventListener("submit", async (event) => {
       responseData.getStargazersAndForks(owner, repo),
       responseData.getLengthActive(owner, repo)
     ]);
+
+    if ([languages, topTenContributors, stargazersAndForks, lengthActive].includes(undefined)) {
+      throw new Error("Failed to fetch data from GitHub API. Check your owner and repository name and try again.");
+    }
     
     console.log("Fetched Data:", { languages, topTenContributors, stargazersAndForks, lengthActive });
 
@@ -79,12 +83,22 @@ f.addEventListener("submit", async (event) => {
       console.log("Step Exit:", response);
     }
 
+
+
   } catch (error) {
     console.error('Failed to process form submission:', error);
+
     const errorMessage = document.getElementsByClassName("error-message");
+    
+    console.log('Error message elements found:', errorMessage.length);
+    
     if (errorMessage.length > 0) {
-      errorMessage[0].innerHTML = `Error: ${error.message}`;
+      console.log('Setting innerHTML for error message element.');
+      errorMessage[0].innerHTML = `Error: ${error.message || 'An unexpected error occurred.'}`;
+    } else {
+      console.log('No element found with the class "error-message".');
     }
+    
   }
 });
 
