@@ -1,5 +1,6 @@
 async function createLanguageChart(languages) {
-  d3.select("svg").remove();
+  d3.select("#chart-0-container svg").remove();
+
 
   var width = 1000; // Increased width for better visibility on mobile
   var height = 700; // Increased height proportionally
@@ -124,8 +125,15 @@ async function createLanguageChart(languages) {
 
 
 async function createTopTenContributorsChart(data) {
+    // Clear any existing SVG
+    d3.select("#chart-0-container svg").remove();
+
   // Select the container width
   var svgContainer = d3.select("#chart-0-container");
+  if (svgContainer.empty()) {
+    console.error("Chart container not found");
+    return;
+  }
   var containerWidth = parseInt(svgContainer.style("width"));
 
   // Adjust dimensions based on container width
@@ -138,8 +146,7 @@ async function createTopTenContributorsChart(data) {
     width = containerWidth - margin.left - margin.right,
     height = containerWidth < 500 ? containerWidth * 0.8 - margin.top - margin.bottom : containerWidth * 0.6 - margin.top - margin.bottom; // Give more vertical space on mobile
 
-  // Clear any existing SVG
-  d3.select("svg").remove();
+
 
   var svg = svgContainer
     .append("svg")
@@ -209,9 +216,14 @@ async function createTopTenContributorsChart(data) {
 
 async function createStargazersAndForksChart(response) {
 
+  d3.select("#chart-0-container svg").remove();
 
   // Select the container width
   var svgContainer = d3.select("#chart-0-container");
+  if (svgContainer.empty()) {
+    console.error("Chart container not found");
+    return;
+  }
   var containerWidth = parseInt(svgContainer.style("width"));
 
 
@@ -234,8 +246,6 @@ document.body.offsetHeight; // Force a reflow
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
-    d3.select("svg").remove();
   let data = [
     { label: "Stargazers", value: response.stargazers_count },
     { label: "Forks", value: response.forks_count }
@@ -278,8 +288,13 @@ document.body.offsetHeight; // Force a reflow
 }
 
 async function createLengthActiveChart(data) {
+  d3.select("#chart-0-container svg").remove();
 
     var svgContainer = d3.select("#chart-0-container");
+    if (svgContainer.empty()) {
+      console.error("Chart container not found");
+      return;
+    }
   var containerWidth = parseInt(svgContainer.style("width"));
 
   var margin = {
@@ -291,7 +306,7 @@ async function createLengthActiveChart(data) {
   width = containerWidth - margin.left - margin.right,
   height = containerWidth < 500 ? containerWidth * 0.8 - margin.top - margin.bottom : containerWidth * 0.6 - margin.top - margin.bottom; // Give more vertical space on mobile
 
-  d3.select("svg").remove();
+
 
   function calculateDuration(startDateStr, endDateStr) {
     const startDate = new Date(startDateStr);
@@ -311,6 +326,10 @@ async function createLengthActiveChart(data) {
   const duration = calculateDuration(startDateStr, endDateStr);
 
   var svgContainer = d3.select("#chart-0-container");
+  if (svgContainer.empty()) {
+    console.error("Chart container not found");
+    return;
+  }
 
   var svg = svgContainer
     .append("svg")
