@@ -1,10 +1,9 @@
 async function createLanguageChart(languages) {
   d3.select("#chart-0-container svg").remove();
 
-
-  var width = 1000; // Increased width for better visibility on mobile
-  var height = 700; // Increased height proportionally
-  var margin = 120; // Slightly increased margin for better spacing on mobile
+  var width = 1000; // Width of the chart
+  var height = 700; // Height of the chart
+  var margin = 120; // Margin around the pie chart
 
   var radius = Math.min(width, height) / 2 - margin;
 
@@ -55,73 +54,54 @@ async function createLanguageChart(languages) {
     .attr("stroke", "black")
     .style("stroke-width", "2px");
 
-  var labels = svg
-    .selectAll("labels")
-    .data(data_ready)
-    .enter()
-    .append("text")
-    .text(function (d) {
-      var percentage = ((d.data.count / total) * 100).toFixed(1);
-      return `${d.data.language} (${percentage}%)`;
-    })
-    .attr("transform", function (d) {
-      var pos = arc.centroid(d);
-      var midAngle = Math.atan2(pos[1], pos[0]);
-      var x = Math.cos(midAngle) * (radius + 60); // Increased label offset
-      var y = Math.sin(midAngle) * (radius + 60); // Increased label offset
-      return `translate(${x},${y})`;
-    })
-    .style("text-anchor", function (d) {
-      var pos = arc.centroid(d);
-      return Math.cos(Math.atan2(pos[1], pos[0])) > 0 ? "start" : "end";
-    })
-    .style("font-size", 28) // Increased font size
-    .attr("fill", "white");
+  // Tooltip div
+  const tooltip = d3
+    .select("body")
+    .append("div")
+    .style("position", "absolute")
+    .style("background-color", "white")
+    .style("padding", "8px")
+    .style("border-radius", "4px")
+    .style("box-shadow", "0px 0px 2px rgba(0, 0, 0, 0.5)")
+    .style("visibility", "hidden") // Initially hidden
+    .style("color", "black") // Ensures text is visible
+    .style("font-size", "14px")
+    .style("pointer-events", "none");
 
-  // Apply force-directed placement to labels to avoid overlap
-  function forceDirectedLabelPlacement() {
-    var nodes = labels.nodes().map((label, i) => {
-      var bbox = label.getBBox();
-      return {
-        node: label,
-        x: parseFloat(label.getAttribute('transform').split('(')[1].split(')')[0].split(',')[0]),
-        y: parseFloat(label.getAttribute('transform').split('(')[1].split(')')[0].split(',')[1]),
-        width: bbox.width,
-        height: bbox.height,
-        originalX: parseFloat(label.getAttribute('transform').split('(')[1].split(')')[0].split(',')[0]),
-        originalY: parseFloat(label.getAttribute('transform').split('(')[1].split(')')[0].split(',')[1])
-      };
-    });
+  // Tooltip functionality
+  arcs
+    .on("mouseover", function (event, d) {
+      tooltip
+        .html(
+          `<strong>${d.data.language}</strong><br>Count: ${d.data.count}<br>Percentage: ${(
+            (d.data.count / total) *
+            100
+          ).toFixed(1)}%`
+        )
+        .style("visibility", "visible");
+    })
+    .on("mousemove", function (event) {
+      // Get the current tooltip position and browser width
+      var tooltipWidth = tooltip.node().offsetWidth;
+      var pageWidth = window.innerWidth;
 
-    // Simple force simulation
-    for (var i = 0; i < 500; i++) { // Iterate more for better results
-      for (var a = 0; a < nodes.length; a++) {
-        for (var b = a + 1; b < nodes.length; b++) {
-          var dx = nodes[b].x - nodes[a].x;
-          var dy = nodes[b].y - nodes[a].y;
-          var distance = Math.sqrt(dx * dx + dy * dy);
-          var minDist = (nodes[a].width + nodes[b].width) / 2;
-
-          if (distance < minDist) {
-            var moveX = (dx / distance) * (minDist - distance);
-            var moveY = (dy / distance) * (minDist - distance);
-            nodes[a].x -= moveX / 2;
-            nodes[a].y -= moveY / 2;
-            nodes[b].x += moveX / 2;
-            nodes[b].y += moveY / 2;
-          }
-        }
+      // Calculate the tooltip's position and adjust if necessary
+      var xPos = event.pageX + 10;
+      if (xPos + tooltipWidth > pageWidth) {
+        xPos = event.pageX - tooltipWidth - 10; // Shift the tooltip to the left if it's too close to the edge
       }
-    }
 
-    nodes.forEach(function(d) {
-      d3.select(d.node)
-        .attr("transform", `translate(${d.x},${d.y})`);
+      tooltip
+        .style("top", event.pageY - 10 + "px")
+        .style("left", xPos + "px");
+    })
+    .on("mouseout", function () {
+      tooltip.style("visibility", "hidden");
     });
-  }
 
-  forceDirectedLabelPlacement();
+  // No labels needed anymore, as tooltips provide all the information.
 }
+
 
 
 async function createTopTenContributorsChart(data) {
