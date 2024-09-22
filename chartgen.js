@@ -158,10 +158,6 @@ async function createLanguageChart(languages) {
 }
 
 
-
-
-
-
 async function createTopTenContributorsChart(data) {
     // Clear any existing SVG
     d3.select("#chart-0-container svg").remove();

@@ -91,8 +91,13 @@ function reinitializeScrollytelling(languages, topTenContributors, stargazersAnd
 
   const steps = d3.selectAll(".step");
 
+  if (steps.empty()) {
+    console.error("No .step elements found. Ensure the HTML structure is correct.");
+    return;
+  }
+
   scroller
-    .setup({ step: ".step" })
+    .setup({ step: ".step", offset: 0.5, debug: false }) // Adjust offset as needed
     .onStepEnter(handleStepEnter)
     .onStepExit(handleStepExit);
 
@@ -108,7 +113,7 @@ function reinitializeScrollytelling(languages, topTenContributors, stargazersAnd
         d3.select(steps.nodes()[index]).classed("active", true);
       }, 50); // Delay to ensure proper rendering
     } else {
-      console.log("Error: Invalid index or missing callback or data.");
+      console.error("Error: Invalid index or missing callback or data.");
     }
 
     currentStepIndex = index;
@@ -120,7 +125,4 @@ function reinitializeScrollytelling(languages, topTenContributors, stargazersAnd
     d3.select(steps.nodes()[index]).classed("active", false);
     console.log("Step Exit:", response);
   }
-
-  // Initially trigger the first step to render the initial chart
-  scroller.triggerStep(0);
 }
