@@ -35,7 +35,7 @@ async function createLanguageChart(languages) {
 
   filteredData.sort((a, b) => b.count - a.count);
 
-  var customRange = d3.schemeCategory10; // Using a predefined D3 color scheme
+  var customRange = d3.schemeCategory10;
   var color = d3.scaleOrdinal().domain(filteredData.map((d) => d.language)).range(customRange);
 
   var pie = d3.pie().value((d) => d.count);
@@ -60,13 +60,20 @@ async function createLanguageChart(languages) {
     .append("div")
     .style("position", "absolute")
     .style("background-color", "white")
-    .style("padding", "8px")
+    .style("padding", "4px 6px")
     .style("border-radius", "4px")
     .style("box-shadow", "0px 0px 2px rgba(0, 0, 0, 0.5)")
     .style("visibility", "hidden") // Initially hidden
     .style("color", "black") // Ensures text is visible
-    .style("font-size", "14px")
-    .style("pointer-events", "none");
+    .style("font-size", "12px")
+    .style("pointer-events", "none")
+    .style("transform", "translate(-50%, -100%)") // Move tooltip to the center of the cursor
+    .style("width", (window.innerWidth / 4) + "px"); // Set width to a quarter of the screen width
+
+  // Adjust tooltip width on window resize
+  window.addEventListener("resize", () => {
+    tooltip.style("width", (window.innerWidth / 4) + "px");
+  });
 
   // Tooltip functionality
   arcs
@@ -81,26 +88,19 @@ async function createLanguageChart(languages) {
         .style("visibility", "visible");
     })
     .on("mousemove", function (event) {
-      // Get the current tooltip position and browser width
-      var tooltipWidth = tooltip.node().offsetWidth;
-      var pageWidth = window.innerWidth;
-
-      // Calculate the tooltip's position and adjust if necessary
-      var xPos = event.pageX + 10;
-      if (xPos + tooltipWidth > pageWidth) {
-        xPos = event.pageX - tooltipWidth - 10; // Shift the tooltip to the left if it's too close to the edge
-      }
+      var xPos = event.pageX;
+      var yPos = event.pageY - 10;
 
       tooltip
-        .style("top", event.pageY - 10 + "px")
+        .style("top", yPos + "px")
         .style("left", xPos + "px");
     })
     .on("mouseout", function () {
       tooltip.style("visibility", "hidden");
     });
-
-  // No labels needed anymore, as tooltips provide all the information.
 }
+
+
 
 
 
