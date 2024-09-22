@@ -75,6 +75,9 @@ async function createLanguageChart(languages) {
     tooltip.style("width", (window.innerWidth / 4) + "px");
   });
 
+  // Variable to track if tooltip should persist
+  let tooltipPersisted = false;
+
   // Tooltip functionality for both hover and click
   arcs
     .on("mouseover", function (event, d) {
@@ -93,13 +96,10 @@ async function createLanguageChart(languages) {
       }
     })
     .on("click", function (event, d) {
-      // Show the tooltip on click for mobile users and make it persist
+      // Show the tooltip on click and make it persist
       showTooltip(event, d);
       tooltipPersisted = true; // Set the flag to true
     });
-
-  // Variable to track if tooltip should persist
-  let tooltipPersisted = false;
 
   // Function to show the tooltip
   function showTooltip(event, d) {
@@ -149,11 +149,12 @@ async function createLanguageChart(languages) {
 
   // Hide the tooltip on scroll
   window.addEventListener("scroll", () => {
+    // Check if the tooltip is currently visible and persisting
     if (tooltipPersisted) {
       hideTooltip();
       tooltipPersisted = false; // Reset the persistence flag
     }
-  });
+  }, { passive: true }); // Adding passive: true for better performance
 }
 
 
