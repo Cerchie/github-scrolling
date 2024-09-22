@@ -75,30 +75,87 @@ async function createLanguageChart(languages) {
     tooltip.style("width", (window.innerWidth / 4) + "px");
   });
 
-  // Tooltip functionality
+  // Tooltip functionality for both hover and click
   arcs
     .on("mouseover", function (event, d) {
-      tooltip
-        .html(
-          `<strong>${d.data.language}</strong><br>Count: ${d.data.count}<br>Percentage: ${(
-            (d.data.count / total) *
-            100
-          ).toFixed(1)}%`
-        )
-        .style("visibility", "visible");
+      if (!tooltipPersisted) {
+        showTooltip(event, d);
+      }
     })
     .on("mousemove", function (event) {
-      var xPos = event.pageX;
-      var yPos = event.pageY - 10;
-
-      tooltip
-        .style("top", yPos + "px")
-        .style("left", xPos + "px");
+      if (!tooltipPersisted) {
+        moveTooltip(event);
+      }
     })
     .on("mouseout", function () {
-      tooltip.style("visibility", "hidden");
+      if (!tooltipPersisted) {
+        hideTooltip();
+      }
+    })
+    .on("click", function (event, d) {
+      // Show the tooltip on click for mobile users and make it persist
+      showTooltip(event, d);
+      tooltipPersisted = true; // Set the flag to true
     });
+
+  // Variable to track if tooltip should persist
+  let tooltipPersisted = false;
+
+  // Function to show the tooltip
+  function showTooltip(event, d) {
+    tooltip
+      .html(
+        `<strong>${d.data.language}</strong><br>Count: ${d.data.count}<br>Percentage: ${(
+          (d.data.count / total) *
+          100
+        ).toFixed(1)}%`
+      )
+      .style("visibility", "visible")
+      .style("top", event.pageY - 10 + "px")
+      .style("left", event.pageX + "px");
+  }
+
+  // Function to move the tooltip
+  function moveTooltip(event) {
+    var xPos = event.pageX;
+    var yPos = event.pageY - 10;
+
+    tooltip.style("top", yPos + "px").style("left", xPos + "px");
+  }
+
+  // Function to hide the tooltip
+  function hideTooltip() {
+    tooltip.style("visibility", "hidden");
+  }
+
+  // Handle touch events
+  arcs
+    .on("touchstart", function (event, d) {
+      event.preventDefault(); // Prevent default behavior (like scrolling)
+      showTooltip(event.touches[0], d);
+      tooltipPersisted = true; // Set the flag to true
+    })
+    .on("touchmove", function (event) {
+      event.preventDefault();
+      if (!tooltipPersisted) {
+        moveTooltip(event.touches[0]);
+      }
+    })
+    .on("touchend", function () {
+      if (!tooltipPersisted) {
+        hideTooltip();
+      }
+    });
+
+  // Hide the tooltip on scroll
+  window.addEventListener("scroll", () => {
+    if (tooltipPersisted) {
+      hideTooltip();
+      tooltipPersisted = false; // Reset the persistence flag
+    }
+  });
 }
+
 
 
 
