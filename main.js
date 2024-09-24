@@ -78,7 +78,7 @@ function clearAllCharts() {
 }
 
 function reinitializeScrollytelling(languages, topTenContributors, stargazersAndForks, lengthActive) {
-  // Ensure scrollama is properly initialized
+
   const scroller = scrollama();
 
   // Chart creation callbacks mapped to their data
@@ -110,10 +110,10 @@ function reinitializeScrollytelling(languages, topTenContributors, stargazersAnd
     const { callback, data } = callbacksWithData[index];
 
     if (callback && data) {
-      setTimeout(() => {
+   
         callback(data);
         d3.select(steps.nodes()[index]).classed("active", true);
-      }, 50);
+
     } else {
       console.error("Error: Invalid index or missing callback or data.");
     }
