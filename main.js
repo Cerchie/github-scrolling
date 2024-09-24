@@ -78,7 +78,7 @@ function clearAllCharts() {
 }
 
 function reinitializeScrollytelling(languages, topTenContributors, stargazersAndForks, lengthActive) {
-  // Initialize scrollama
+  // Ensure scrollama is properly initialized
   const scroller = scrollama();
 
   // Chart creation callbacks mapped to their data
@@ -89,6 +89,7 @@ function reinitializeScrollytelling(languages, topTenContributors, stargazersAnd
     { callback: createLengthActiveChart, data: lengthActive },
   ];
 
+  // Select step elements
   const steps = d3.selectAll(".step");
 
   if (steps.empty()) {
@@ -96,8 +97,9 @@ function reinitializeScrollytelling(languages, topTenContributors, stargazersAnd
     return;
   }
 
+  // Adjust the setup for mobile
   scroller
-    .setup({ step: ".step", offset: 0.5, debug: false }) // Adjust offset as needed
+    .setup({ step: ".step", offset: window.innerWidth < 768 ? 0.7 : 0.5, debug: false })
     .onStepEnter(handleStepEnter)
     .onStepExit(handleStepExit);
 
@@ -109,9 +111,9 @@ function reinitializeScrollytelling(languages, topTenContributors, stargazersAnd
 
     if (callback && data) {
       setTimeout(() => {
-        callback(data); // Call the appropriate chart creation function with its data
+        callback(data);
         d3.select(steps.nodes()[index]).classed("active", true);
-      }, 50); // Delay to ensure proper rendering
+      }, 50);
     } else {
       console.error("Error: Invalid index or missing callback or data.");
     }
@@ -126,3 +128,4 @@ function reinitializeScrollytelling(languages, topTenContributors, stargazersAnd
     console.log("Step Exit:", response);
   }
 }
+
