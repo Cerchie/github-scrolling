@@ -14,6 +14,7 @@ f.addEventListener("submit", async (event) => {
   currentStepIndex = -1;
 
     const errorMessage = document.getElementsByClassName("error-message");
+    const scrollInfo = document.getElementById("scroll-info");
   try {
     // Clear all existing charts and scroller before processing the new submission
     clearAllCharts();
@@ -26,6 +27,7 @@ f.addEventListener("submit", async (event) => {
     // Get owner and repository from the input fields
     const chosenOwner = document.getElementById("owner").value;
     const chosenRepo = document.getElementById("repo").value;
+    scrollInfo.innerHTML = `Scroll down to view the data for the repository ${chosenOwner}/${chosenRepo}.`;
 
     // Validate inputs
     if (!chosenOwner || !chosenRepo) {
