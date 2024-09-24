@@ -13,12 +13,12 @@ f.addEventListener("submit", async (event) => {
   repo = "";
   currentStepIndex = -1;
 
+    const errorMessage = document.getElementsByClassName("error-message");
   try {
     // Clear all existing charts and scroller before processing the new submission
     clearAllCharts();
 
-    // Clear any previous error messages
-    const errorMessage = document.getElementsByClassName("error-message");
+
     if (errorMessage.length > 0) {
       errorMessage[0].innerHTML = "";
     }
@@ -29,6 +29,7 @@ f.addEventListener("submit", async (event) => {
 
     // Validate inputs
     if (!chosenOwner || !chosenRepo) {
+      errorMessage[0].innerHTML = `Owner and repository fields must not be empty.`;
       throw new Error("Owner and repository fields must not be empty.");
     }
 
@@ -47,12 +48,14 @@ f.addEventListener("submit", async (event) => {
       responseData.getLengthActive(owner, repo).catch(e => ({ error: e })),
     ]);
 
-    if ([languages, topTenContributors, stargazersAndForks, lengthActive].some(result => result.error)) {
-      throw new Error("One or more API calls failed");
+    if ([languages, topTenContributors, stargazersAndForks, lengthActive].some(result => result && result.error)) {
+      errorMessage[0].innerHTML = `One or more API calls failed. Check your owner and repository name and try again.`;
+      throw new Error("One or more API calls failed. Check your owner and repository name and try again.");
     }
 
     // Check if any data failed to fetch
     if ([languages, topTenContributors, stargazersAndForks, lengthActive].includes(undefined)) {
+      errorMessage[0].innerHTML = `Failed to fetch data from GitHub API. Check your owner and repository name and try again.`;
       throw new Error("Failed to fetch data from GitHub API. Check your owner and repository name and try again.");
     }
 
@@ -65,7 +68,7 @@ f.addEventListener("submit", async (event) => {
     console.error('Failed to process form submission:', error);
 
     // Display error messages if they occur
-    if (errorMessage.length > 0) {
+    if (error.length > 0) {
       errorMessage[0].innerHTML = `Error: ${error.message || 'An unexpected error occurred.'}`;
     }
   }
